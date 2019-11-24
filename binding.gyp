@@ -21,27 +21,31 @@
         '-Wno-nonnull-compare',
       ],
       'defines': [
+        # Current default values for desktop (544002c at 24.11.2019)
+        'ECMULT_GEN_PREC_BITS=4',
+        'ECMULT_WINDOW_SIZE=15',
+        # Activate modules
         'ENABLE_MODULE_ECDH=1',
         'ENABLE_MODULE_RECOVERY=1',
+        #
+        'USE_ENDOMORPHISM=1',
+        # Ignore GMP, dynamic linking, so will be hard to use with prebuilds
         'USE_NUM_NONE=1',
         'USE_FIELD_INV_BUILTIN=1',
         'USE_SCALAR_INV_BUILTIN=1',
-        'ECMULT_WINDOW_SIZE=2',
-        'ECMULT_GEN_PREC_BITS=2'
       ],
       'conditions': [
-        ['target_arch=="x64" and OS!="win"', {
+        ['target_arch=="x64"', {
           'defines': [
             'HAVE___INT128=1',
             'USE_ASM_X86_64=1',
             'USE_FIELD_5X52=1',
-            'USE_FIELD_5X52_INT128=1',
-            'USE_SCALAR_4X64=1'
+            'USE_SCALAR_4X64=1',
           ]
         }, {
           'defines': [
             'USE_FIELD_10X26=1',
-            'USE_SCALAR_8X32=1'
+            'USE_SCALAR_8X32=1',
           ]
         }],
       ],
