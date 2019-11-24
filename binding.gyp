@@ -1,34 +1,26 @@
 {
+  'target_default': {
+    'cflags': [
+      '-Wall',
+      '-Wextra',
+    ],
+  },
   'targets': [
     {
-      'target_name': 'fcrypto',
+      'target_name': 'secp256k1',
+      'type': 'static_library',
       'sources': [
-        'src/addon/main.cc',
-        'src/addon/secp256k1.cc',
         'src/secp256k1/src/secp256k1.c',
       ],
       'include_dirs': [
-        '<!@(node -p \'require("node-addon-api").include\')',
-        'src',
         'src/secp256k1',
         'src/secp256k1/src',
       ],
       'cflags': [
-        '-Wall',
-        '-Wextra',
-        # secp256k1
         '-Wno-unused-function',
         '-Wno-nonnull-compare',
       ],
-      'cflags!': [
-        '-fno-exceptions',
-      ],
-      'cflags_cc!': [
-        '-fno-exceptions',
-      ],
       'defines': [
-        'NAPI_VERSION=1',
-        # secp256k1
         'ENABLE_MODULE_ECDH=1',
         'ENABLE_MODULE_RECOVERY=1',
         'USE_NUM_NONE=1',
@@ -52,6 +44,25 @@
             'USE_SCALAR_8X32=1'
           ]
         }],
+      ],
+    },
+    {
+      'target_name': 'fcrypto',
+      'dependencies': [
+        'secp256k1',
+      ],
+      'sources': [
+        'src/addon/main.cc',
+        'src/addon/secp256k1.cc',
+      ],
+      'include_dirs': [
+        '<!@(node -p \'require("node-addon-api").include\')',
+        'src',
+      ],
+      'cflags!': [ '-fno-exceptions' ],
+      'cflags_cc!': [ '-fno-exceptions' ],
+      'defines': [
+        'NAPI_VERSION=1',
       ],
       'xcode_settings': {
         'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
