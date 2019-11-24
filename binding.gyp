@@ -13,8 +13,6 @@
         'src/secp256k1',
         'src/secp256k1/src',
       ],
-      # TODO
-      # 'variables': { 'napi_build_version': '3' },
       'cflags': [
         '-Wall',
         '-Wextra',
@@ -29,6 +27,7 @@
         '-fno-exceptions',
       ],
       'defines': [
+        'NAPI_VERSION=1',
         # secp256k1
         'ENABLE_MODULE_ECDH=1',
         'ENABLE_MODULE_RECOVERY=1',
