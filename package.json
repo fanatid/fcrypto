@@ -21,7 +21,7 @@
   },
   "scripts": {
     "build": "node-gyp build",
-    "format": "clang-format -i -verbose src/addon/* && echo 'todo prettier'",
+    "format": "clang-format -i -verbose src/addon/* src/fcrypto/* && echo 'todo prettier'",
     "lint": "standard",
     "rebuild": "node-gyp rebuild",
     "test": "npm run lint"

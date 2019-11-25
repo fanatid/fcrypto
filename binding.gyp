@@ -49,11 +49,22 @@
           ]
         }],
       ],
-    },
-    {
+    }, {
       'target_name': 'fcrypto',
+      'type': 'static_library',
+      'sources': [
+        'src/fcrypto/secp256k1.cc',
+      ],
+      'include_dirs': [
+        'src',
+      ],
       'dependencies': [
         'secp256k1',
+      ],
+    }, {
+      'target_name': 'addon',
+      'dependencies': [
+        'fcrypto',
       ],
       'sources': [
         'src/addon/main.cc',
@@ -63,8 +74,12 @@
         '<!@(node -p \'require("node-addon-api").include\')',
         'src',
       ],
-      'cflags!': [ '-fno-exceptions' ],
-      'cflags_cc!': [ '-fno-exceptions' ],
+      'cflags!': [
+        '-fno-exceptions',
+      ],
+      'cflags_cc!': [
+        '-fno-exceptions',
+      ],
       'defines': [
         'NAPI_VERSION=1',
       ],
@@ -74,7 +89,9 @@
         'MACOSX_DEPLOYMENT_TARGET': '10.7',
       },
       'msvs_settings': {
-        'VCCLCompilerTool': { 'ExceptionHandling': 1 },
+        'VCCLCompilerTool': {
+          'ExceptionHandling': 1,
+        },
       },
     }
   ]
