@@ -5,11 +5,13 @@
 #include <cstring>
 
 // Local helpers
-#define RESULT_ASSERT1(fn)                                                     \
-  if (fn != 1) {                                                               \
+#define RESULT_ASSERT1(result)                                                 \
+  if (result != 1) {                                                           \
     fprintf(stderr, "[fcrypto] libsecp256k1 function should always return 1"); \
     abort();                                                                   \
   }
+
+#define RETURN_INVERTED_RESULT(result) return result == 1 ? 0 : 1;
 
 #define PUBKEY_SERIALIZE_WITH_RETURN0(output, pubkey, compressed)          \
   {                                                                        \
@@ -33,8 +35,7 @@ Secp256k1::~Secp256k1() {
 
 // PrivateKey
 int Secp256k1::PrivateKeyVerify(const unsigned char* seckey) {
-  int ret = secp256k1_ec_seckey_verify(ctx_, seckey);
-  return ret == 1 ? 0 : 1;
+  RETURN_INVERTED_RESULT(secp256k1_ec_seckey_verify(ctx_, seckey));
 }
 
 int Secp256k1::PrivateKeyNegate(unsigned char* seckey) {
@@ -44,14 +45,12 @@ int Secp256k1::PrivateKeyNegate(unsigned char* seckey) {
 
 int Secp256k1::PrivateKeyTweakAdd(unsigned char* seckey,
                                   const unsigned char* tweak) {
-  int ret = secp256k1_ec_privkey_tweak_add(ctx_, seckey, tweak);
-  return ret == 1 ? 0 : 1;
+  RETURN_INVERTED_RESULT(secp256k1_ec_privkey_tweak_add(ctx_, seckey, tweak));
 }
 
 int Secp256k1::PrivateKeyTweakMul(unsigned char* seckey,
                                   const unsigned char* tweak) {
-  int ret = secp256k1_ec_privkey_tweak_mul(ctx_, seckey, tweak);
-  return ret == 1 ? 0 : 1;
+  RETURN_INVERTED_RESULT(secp256k1_ec_privkey_tweak_mul(ctx_, seckey, tweak));
 }
 
 // PublicKey
