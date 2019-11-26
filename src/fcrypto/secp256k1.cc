@@ -11,7 +11,12 @@
     abort();                                                                   \
   }
 
-#define RETURN_INVERTED_RESULT(result) return result == 1 ? 0 : 1;
+#define RETURN_INVERTED(result) return result == 1 ? 0 : 1;
+
+#define RETURN_IF_ZERO(result, retCode) \
+  if (result == 0) {                    \
+    return retCode;                     \
+  }
 
 #define PUBKEY_SERIALIZE_WITH_RETURN0(output, pubkey, compressed)          \
   {                                                                        \
@@ -35,7 +40,7 @@ Secp256k1::~Secp256k1() {
 
 // PrivateKey
 int Secp256k1::PrivateKeyVerify(const unsigned char* seckey) {
-  RETURN_INVERTED_RESULT(secp256k1_ec_seckey_verify(ctx_, seckey));
+  RETURN_INVERTED(secp256k1_ec_seckey_verify(ctx_, seckey));
 }
 
 int Secp256k1::PrivateKeyNegate(unsigned char* seckey) {
@@ -45,12 +50,12 @@ int Secp256k1::PrivateKeyNegate(unsigned char* seckey) {
 
 int Secp256k1::PrivateKeyTweakAdd(unsigned char* seckey,
                                   const unsigned char* tweak) {
-  RETURN_INVERTED_RESULT(secp256k1_ec_privkey_tweak_add(ctx_, seckey, tweak));
+  RETURN_INVERTED(secp256k1_ec_privkey_tweak_add(ctx_, seckey, tweak));
 }
 
 int Secp256k1::PrivateKeyTweakMul(unsigned char* seckey,
                                   const unsigned char* tweak) {
-  RETURN_INVERTED_RESULT(secp256k1_ec_privkey_tweak_mul(ctx_, seckey, tweak));
+  RETURN_INVERTED(secp256k1_ec_privkey_tweak_mul(ctx_, seckey, tweak));
 }
 
 // PublicKey
@@ -58,10 +63,7 @@ int Secp256k1::PublicKeyCreate(unsigned char* output,
                                const unsigned char* seckey,
                                bool compressed) {
   secp256k1_pubkey pubkey;
-  if (secp256k1_ec_pubkey_create(ctx_, &pubkey, seckey) == 0) {
-    return 1;
-  }
-
+  RETURN_IF_ZERO(secp256k1_ec_pubkey_create(ctx_, &pubkey, seckey), 1);
   PUBKEY_SERIALIZE_WITH_RETURN0(output, pubkey, compressed);
 }
 
@@ -70,10 +72,7 @@ int Secp256k1::PublicKeyConvert(unsigned char* output,
                                 size_t inputlen,
                                 bool compressed) {
   secp256k1_pubkey pubkey;
-  if (secp256k1_ec_pubkey_parse(ctx_, &pubkey, input, inputlen) == 0) {
-    return 1;
-  }
-
+  RETURN_IF_ZERO(secp256k1_ec_pubkey_parse(ctx_, &pubkey, input, inputlen), 1);
   PUBKEY_SERIALIZE_WITH_RETURN0(output, pubkey, compressed);
 }
 

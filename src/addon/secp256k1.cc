@@ -1,11 +1,19 @@
 #include <addon/secp256k1.h>
-#include <addon/util.h>
+
+#define RET(FnCall) \
+  return Napi::Number::New(info.Env(), this->secp256k1_->FnCall);
 
 Napi::Value Secp256k1Addon::New(Napi::Env env) {
   Napi::Function func = DefineClass(
       env, "Secp256k1Addon",
       {
           InstanceMethod("privateKeyVerify", &Secp256k1Addon::PrivateKeyVerify),
+          InstanceMethod("privateKeyNegate", &Secp256k1Addon::PrivateKeyNegate),
+          InstanceMethod("privateKeyTweakAdd",
+                         &Secp256k1Addon::PrivateKeyTweakAdd),
+          InstanceMethod("privateKeyTweakMul",
+                         &Secp256k1Addon::PrivateKeyTweakMul),
+
           InstanceMethod("publicKeyCreate", &Secp256k1Addon::PublicKeyCreate),
       });
 
@@ -21,24 +29,40 @@ Secp256k1Addon::~Secp256k1Addon() {
   delete secp256k1_;
 }
 
+// PrivateKey
 Napi::Value Secp256k1Addon::PrivateKeyVerify(const Napi::CallbackInfo& info) {
   auto seckey = info[0].As<Napi::Buffer<const unsigned char>>().Data();
 
-  int ret = this->secp256k1_->PrivateKeyVerify(seckey);
-  return Napi::Boolean::New(info.Env(), ret == 0 ? true : false);
+  RET(PrivateKeyVerify(seckey));
 }
 
-// Napi::Value PrivateKeyNegate(const Napi::CallbackInfo& info);
-// Napi::Value PrivateKeyTweakAdd(const Napi::CallbackInfo& info);
-// Napi::Value PrivateKeyTweakMul(const Napi::CallbackInfo& info);
+Napi::Value Secp256k1Addon::PrivateKeyNegate(const Napi::CallbackInfo& info) {
+  auto seckey = info[0].As<Napi::Buffer<unsigned char>>().Data();
 
+  RET(PrivateKeyNegate(seckey));
+}
+
+Napi::Value Secp256k1Addon::PrivateKeyTweakAdd(const Napi::CallbackInfo& info) {
+  auto seckey = info[0].As<Napi::Buffer<unsigned char>>().Data();
+  auto tweak = info[1].As<Napi::Buffer<const unsigned char>>().Data();
+
+  RET(PrivateKeyTweakAdd(seckey, tweak));
+}
+
+Napi::Value Secp256k1Addon::PrivateKeyTweakMul(const Napi::CallbackInfo& info) {
+  auto seckey = info[0].As<Napi::Buffer<unsigned char>>().Data();
+  auto tweak = info[1].As<Napi::Buffer<const unsigned char>>().Data();
+
+  RET(PrivateKeyTweakAdd(seckey, tweak));
+}
+
+// PublicKey
 Napi::Value Secp256k1Addon::PublicKeyCreate(const Napi::CallbackInfo& info) {
   auto output = info[0].As<Napi::Buffer<unsigned char>>().Data();
   auto seckey = info[1].As<Napi::Buffer<const unsigned char>>().Data();
   auto compressed = info[2].As<Napi::Boolean>().Value();
 
-  int ret = this->secp256k1_->PublicKeyCreate(output, seckey, compressed);
-  return Napi::Number::New(info.Env(), ret);
+  RET(PublicKeyCreate(output, seckey, compressed));
 }
 
 // Napi::Value PublicKeyConvert(const Napi::CallbackInfo& info);
