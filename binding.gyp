@@ -21,6 +21,16 @@
         '-Wno-nonnull-compare',
       ],
       'defines': [
+        # DETERMINISTIC introduced in https://github.com/bitcoin-core/secp256k1/pull/107
+        # Callbacks introduced in https://github.com/bitcoin-core/secp256k1/pull/278
+        # External callbacks introduced in https://github.com/bitcoin-core/secp256k1/pull/595
+        #
+        # USE_EXTERNAL_DEFAULT_CALLBACKS only for WASM, where we ignore all illegal/error callbacks
+        # CHECK uses `fprintf()`, `abort()` and `stderr`, but only if we use GMP or define VERIFY
+        # Because we do not use GMP, DETERMINISTIC is not used.
+        # 'DETERMINISTIC=1',
+        #
+        # For all available definitions, see src/basic-config.h
         # Current default values for desktop (544002c at 24.11.2019)
         'ECMULT_GEN_PREC_BITS=4',
         'ECMULT_WINDOW_SIZE=15',
@@ -53,7 +63,7 @@
       'target_name': 'fcrypto',
       'type': 'static_library',
       'sources': [
-        'src/fcrypto/secp256k1.cc',
+        'src/fcrypto/secp256k1.c',
       ],
       'include_dirs': [
         'src',
