@@ -1,4 +1,5 @@
 #include <fcrypto/secp256k1.h>
+#include <secp256k1/include/secp256k1_recovery.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -150,21 +151,37 @@ int fcrypto_secp256k1_pubkey_convert(const secp256k1_context* ctx,
 
 // // ECDSA
 // // TODO: add custom function & data
-// int fcrypto_secp256k1_ecdsa_sign(const secp256k1_context* ctx,
-//                                  unsigned char* sig,
-//                                  int* recid,
-//                                  const unsigned char* msg32,
-//                                  const unsigned char* seckey) {
-//   return 0;
-// }
+int fcrypto_secp256k1_ecdsa_sign(const secp256k1_context* ctx,
+                                 unsigned char* output,
+                                 int* recid,
+                                 const unsigned char* msg32,
+                                 const unsigned char* seckey) {
+  secp256k1_ecdsa_recoverable_signature sig;
+  RETURN_IF_ZERO(
+      secp256k1_ecdsa_sign_recoverable(ctx, &sig, msg32, seckey,
+                                       secp256k1_nonce_function_rfc6979, NULL),
+      1);
 
-// int fcrypto_secp256k1_ecdsa_verify(const secp256k1_context* ctx,
-//                                    const unsigned char* sig,
-//                                    const unsigned char* msg32,
-//                                    const unsigned char* input,
-//                                    size_t inputlen) {
-//   return 0;
-// }
+  secp256k1_ecdsa_recoverable_signature_serialize_compact(ctx, output, recid,
+                                                          &sig);
+  return 0;
+}
+
+int fcrypto_secp256k1_ecdsa_verify(const secp256k1_context* ctx,
+                                   const unsigned char* sigraw,
+                                   const unsigned char* msg32,
+                                   const unsigned char* input,
+                                   size_t inputlen) {
+  secp256k1_ecdsa_signature sig;
+  RETURN_IF_ZERO(secp256k1_ecdsa_signature_parse_compact(ctx, &sig, sigraw), 1);
+
+  secp256k1_pubkey public_key;
+  RETURN_IF_ZERO(secp256k1_ec_pubkey_parse(ctx, &public_key, input, inputlen),
+                 2);
+
+  RETURN_IF_ZERO(secp256k1_ecdsa_verify(ctx, &sig, msg32, &public_key), 3);
+  return 0;
+}
 
 // int fcrypto_secp256k1_ecdsa_recover(const secp256k1_context* ctx,
 //                                     unsigned char* output,

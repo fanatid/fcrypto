@@ -5,7 +5,7 @@ wasm_build_dir = build/wasm
 
 # Total stack: 1MiB (16 WASM pages, by 64KiB)
 # Total memory: 16MiB (256 WASM pages)
-# Options after `-O3` for smaller not minified JS file, no effect for WASM
+# Options after `-O3` for smaller not minified JS file, WASM not affected
 wasm_build_opts = -s STRICT=1 \
 	-s TOTAL_STACK=1048576 \
 	-s TOTAL_MEMORY=16777216 \
@@ -13,7 +13,11 @@ wasm_build_opts = -s STRICT=1 \
 	-s WASM_TABLE_SIZE=0 \
 	-s ALLOW_TABLE_GROWTH=0 \
 	-O3 \
-	-g1 -s NODEJS_CATCH_EXIT=0 -s NODEJS_CATCH_REJECTION=0 -s ENVIRONMENT='node' -s INCOMING_MODULE_JS_API='[]'
+	-g1 \
+	-s INCOMING_MODULE_JS_API='[]' \
+	-s ENVIRONMENT='node' \
+	-s NODEJS_CATCH_EXIT=0 \
+	-s NODEJS_CATCH_REJECTION=0
 
 wasm-build: wasm-build-docker-image wasm-build-secp256k1 wasm-build-fcrypto
 
@@ -40,7 +44,9 @@ wasm-build-fcrypto:
 				_fcrypto_secp256k1_seckey_tweak_add, \
 				_fcrypto_secp256k1_seckey_tweak_mul, \
 				_fcrypto_secp256k1_pubkey_create, \
-				_fcrypto_secp256k1_pubkey_convert \
+				_fcrypto_secp256k1_pubkey_convert, \
+				_fcrypto_secp256k1_ecdsa_sign, \
+				_fcrypto_secp256k1_ecdsa_verify \
 			]" \
 			-Isrc \
 			-Wall \

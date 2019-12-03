@@ -143,7 +143,7 @@ int fcrypto_secp256k1_signature_import(const secp256k1_context* ctx,
  * invalid
  */
 int fcrypto_secp256k1_ecdsa_sign(const secp256k1_context* ctx,
-                                 unsigned char* sig,
+                                 unsigned char* output,
                                  int* recid,
                                  const unsigned char* msg32,
                                  const unsigned char* seckey);
@@ -155,7 +155,7 @@ int fcrypto_secp256k1_ecdsa_sign(const secp256k1_context* ctx,
  *           3: incorrect or unparseable signature
  */
 int fcrypto_secp256k1_ecdsa_verify(const secp256k1_context* ctx,
-                                   const unsigned char* sig,
+                                   const unsigned char* sigraw,
                                    const unsigned char* msg32,
                                    const unsigned char* input,
                                    size_t inputlen);
