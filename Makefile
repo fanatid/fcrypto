@@ -2,24 +2,10 @@
 all: wasm-build
 
 wasm_build_dir = build/wasm
+wasm_build_dir_js = lib/wasm
+wasm_build_opts = -O3
 
-# Total stack: 1MiB (16 WASM pages, by 64KiB)
-# Total memory: 16MiB (256 WASM pages)
-# Options after `-O3` for smaller not minified JS file, WASM not affected
-wasm_build_opts = -s STRICT=1 \
-	-s TOTAL_STACK=1048576 \
-	-s TOTAL_MEMORY=16777216 \
-	-s ALLOW_MEMORY_GROWTH=0 \
-	-s WASM_TABLE_SIZE=0 \
-	-s ALLOW_TABLE_GROWTH=0 \
-	-O3 \
-	-g1 \
-	-s INCOMING_MODULE_JS_API='[]' \
-	-s ENVIRONMENT='node' \
-	-s NODEJS_CATCH_EXIT=0 \
-	-s NODEJS_CATCH_REJECTION=0
-
-wasm-build: wasm-build-docker-image wasm-build-secp256k1 wasm-build-fcrypto
+wasm-build: wasm-build-docker-image wasm-build-libs wasm-build-fcrypto wasm-build-js
 
 wasm-build-docker-image:
 	@if [ "`id -u`" -ne 1000 ] || [ "`id -g`" -ne 1000 ]; then \
@@ -28,12 +14,22 @@ wasm-build-docker-image:
 	docker build -t fcrypto-build-wasm -f wasm.dockerfile .
 
 wasm-build-fcrypto:
-	# For debug build, set output file extension to `js`
-	# Function names will be minified, but it's possible to see their code in JS file
 	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
 		emcc \
-			-o $(wasm_build_dir)/fcrypto.wasm \
+			-o $(wasm_build_dir)/fcrypto.js \
 			$(wasm_build_opts) \
+			-g1 \
+			-s STRICT=1 \
+			-s TOTAL_STACK=1048576 \
+			-s TOTAL_MEMORY=16777216 \
+			-s ALLOW_MEMORY_GROWTH=0 \
+			-s WASM_MEM_MAX=-1 \
+			-s WASM_TABLE_SIZE=0 \
+			-s ALLOW_TABLE_GROWTH=0 \
+			-s INCOMING_MODULE_JS_API='[]' \
+			-s ENVIRONMENT='node' \
+			-s NODEJS_CATCH_EXIT=0 \
+			-s NODEJS_CATCH_REJECTION=0 \
 			-s EXPORTED_FUNCTIONS="[ \
 				_malloc, \
 				_free, \
@@ -53,11 +49,14 @@ wasm-build-fcrypto:
 			-Wextra \
 			$(wasm_build_dir)/secp256k1.o \
 			src/fcrypto/secp256k1.c
+	cp -u $(wasm_build_dir)/fcrypto.wasm fcrypto.wasm
+
+wasm-build-libs: wasm-build-secp256k1
 
 wasm-build-secp256k1:
 	mkdir -p $(wasm_build_dir)/secp256k1
 	rsync -a --delete src/secp256k1/ $(wasm_build_dir)/secp256k1/
-	# Definitions from binding.gyp
+	# Definitions from binding.gyp (x32)
 	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
 		emcc \
 			-o $(wasm_build_dir)/secp256k1.o \
@@ -78,6 +77,13 @@ wasm-build-secp256k1:
 			-I$(wasm_build_dir)/secp256k1/src \
 			-Wno-unused-function \
 			$(wasm_build_dir)/secp256k1/src/secp256k1.c
+
+wasm-build-js: wasm-build-jsglue
+
+wasm-build-jsglue:
+	util/wasm-parse-emscripten-jsglue.js \
+		-i $(wasm_build_dir)/fcrypto.js \
+		-o $(wasm_build_dir_js)/glue.js
 
 wasm-build-wat:
 	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
