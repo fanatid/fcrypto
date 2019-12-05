@@ -1,33 +1,44 @@
 .PHONY: all
-all: wasm-build
+all: build-wasm
 
-addon-build: addon-build-copy
 
-addon-build-copy:
-	echo 'todo'
+build: build-addon build-wasm
 
-wasm_build_dir = build/wasm
-wasm_build_dir_js = lib/wasm
-wasm_build_opts = -O3
 
-wasm-build: wasm-build-docker-image wasm-build-libs wasm-build-fcrypto wasm-build-copy wasm-build-jsglue
+node_gyp = ./node_modules/.bin/node-gyp
+node_gyp_opts = -j2 --release
 
-wasm-build-docker-image:
+build-addon: build-addon-fcrypto build-addon-copy
+
+build-addon-fcrypto:
+	$(node_gyp) configure $(node_gyp_opts) && $(node_gyp) build $(node_gyp_opts)
+
+build-addon-copy:
+	util/build-addon-copy.js
+
+
+build_wasm_dir = build/wasm
+build_wasm_dir_js = lib/wasm
+build_wasm_opts = -O3
+
+build-wasm: build-wasm-docker-image build-wasm-libs build-wasm-fcrypto build-wasm-copy build-wasm-jsglue
+
+build-wasm-docker-image:
 	@if [ "`id -u`" -ne 1000 ] || [ "`id -g`" -ne 1000 ]; then \
 		echo 'User id and group id, both should be 1000'; exit 1; \
 	else true; fi
 	docker build -t fcrypto-build-wasm -f wasm.dockerfile .
 
-wasm-build-libs: wasm-build-secp256k1
+build-wasm-libs: build-wasm-secp256k1
 
-wasm-build-secp256k1:
-	mkdir -p $(wasm_build_dir)/secp256k1
-	rsync -a --delete src/secp256k1/ $(wasm_build_dir)/secp256k1/
+build-wasm-secp256k1:
+	mkdir -p $(build_wasm_dir)/secp256k1
+	rsync -a --delete src/secp256k1/ $(build_wasm_dir)/secp256k1/
 	# Definitions from binding.gyp (x32)
 	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
 		emcc \
-			-o $(wasm_build_dir)/secp256k1.o \
-			$(wasm_build_opts) \
+			-o $(build_wasm_dir)/secp256k1.o \
+			$(build_wasm_opts) \
 			-c \
 			-D USE_EXTERNAL_DEFAULT_CALLBACKS=1 \
 			-D ECMULT_GEN_PREC_BITS=4 \
@@ -40,16 +51,16 @@ wasm-build-secp256k1:
 			-D USE_SCALAR_INV_BUILTIN=1 \
 			-D USE_FIELD_10X26=1 \
 			-D USE_SCALAR_8X32=1 \
-			-I$(wasm_build_dir)/secp256k1 \
-			-I$(wasm_build_dir)/secp256k1/src \
+			-I$(build_wasm_dir)/secp256k1 \
+			-I$(build_wasm_dir)/secp256k1/src \
 			-Wno-unused-function \
-			$(wasm_build_dir)/secp256k1/src/secp256k1.c
+			$(build_wasm_dir)/secp256k1/src/secp256k1.c
 
-wasm-build-fcrypto:
+build-wasm-fcrypto:
 	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
 		emcc \
-			-o $(wasm_build_dir)/fcrypto.js \
-			$(wasm_build_opts) \
+			-o $(build_wasm_dir)/fcrypto.js \
+			$(build_wasm_opts) \
 			-g1 \
 			-s STRICT=1 \
 			-s TOTAL_STACK=1048576 \
@@ -79,24 +90,34 @@ wasm-build-fcrypto:
 			-Isrc \
 			-Wall \
 			-Wextra \
-			$(wasm_build_dir)/secp256k1.o \
+			$(build_wasm_dir)/secp256k1.o \
 			src/fcrypto/secp256k1.c
 
-wasm-build-copy:
+build-wasm-copy:
 	# copy wasm file
-	cp -u $(wasm_build_dir)/fcrypto.wasm fcrypto.wasm
+	cp -u $(build_wasm_dir)/fcrypto.wasm fcrypto.wasm
 	# generate base64 for browser
-	util/wasm-build-base64.js \
-		-i $(wasm_build_dir)/fcrypto.wasm \
-		-o $(wasm_build_dir_js)/bin-browser.js
+	util/build-wasm-base64.js \
+		-i $(build_wasm_dir)/fcrypto.wasm \
+		-o $(build_wasm_dir_js)/bin-browser.js
 
-wasm-build-jsglue:
-	util/wasm-build-jsglue.js \
-		-i $(wasm_build_dir)/fcrypto.js \
-		-o $(wasm_build_dir_js)/glue.js
+build-wasm-jsglue:
+	util/build-wasm-jsglue.js \
+		-i $(build_wasm_dir)/fcrypto.js \
+		-o $(build_wasm_dir_js)/glue.js
 
-wasm-build-wat:
+build-wasm-wat:
 	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
 		wasm2wat \
-			-o $(wasm_build_dir)/fcrypto.wat \
-			$(wasm_build_dir)/fcrypto.wasm
+			-o $(build_wasm_dir)/fcrypto.wat \
+			$(build_wasm_dir)/fcrypto.wasm
+
+
+clean:
+	rm -rf \
+		build/ \
+		$(build_wasm_dir_js)/bin-browser.js \
+		$(build_wasm_dir_js)/glue.js \
+		fcrypto-darwin-x64.node \
+		fcrypto-linux-x64.node \
+		fcrypto-win32-x64.node

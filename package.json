@@ -23,18 +23,15 @@
     "url": "https://github.com/fanatid/fcrypto.git"
   },
   "scripts": {
-    "build": "node-gyp configure && node-gyp build -v",
     "format": "clang-format -i -verbose src/addon/* src/fcrypto/* && echo 'todo prettier'",
     "lint": "standard",
-    "rebuild": "node-gyp rebuild",
     "test": "npm run lint"
   },
-  "dependencies": {
-    "bindings": "^1.5.0",
-    "lodash": "^4.17.15",
-    "node-addon-api": "^1.7.1"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "lodash": "^4.17.15",
+    "node-addon-api": "^2.0.0",
+    "node-gyp": "^6.0.1",
     "standard": "^14.3.1",
     "yargs": "^15.0.2"
   },
