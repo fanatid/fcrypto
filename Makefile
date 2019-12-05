@@ -99,12 +99,12 @@ build-wasm-copy:
 	# generate base64 for browser
 	util/build-wasm-base64.js \
 		-i $(build_wasm_dir)/fcrypto.wasm \
-		-o $(build_wasm_dir_js)/bin-browser.js
+		-o $(build_wasm_dir_js)/wasm-bin-browser.js
 
 build-wasm-jsglue:
 	util/build-wasm-jsglue.js \
 		-i $(build_wasm_dir)/fcrypto.js \
-		-o $(build_wasm_dir_js)/glue.js
+		-o $(build_wasm_dir_js)/wasm-glue.js
 
 build-wasm-wat:
 	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
@@ -116,8 +116,8 @@ build-wasm-wat:
 clean:
 	rm -rf \
 		build/ \
-		$(build_wasm_dir_js)/bin-browser.js \
-		$(build_wasm_dir_js)/glue.js \
+		$(build_wasm_dir_js)/wasm-bin-browser.js \
+		$(build_wasm_dir_js)/wasm-glue.js \
 		fcrypto-darwin-x64.node \
 		fcrypto-linux-x64.node \
 		fcrypto-win32-x64.node

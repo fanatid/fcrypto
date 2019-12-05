@@ -107,8 +107,8 @@ function runBench (what, count, fn) {
 
 ;(async () => {
   const { randomBytes } = require('crypto')
-  const { secp256k1: addon } = await require('../lib/addon')()
-  const wasm = await require('../lib/wasm')()
+  const { secp256k1: addon } = await require('../')('addon')
+  const wasm = await require('../')('wasm')
 
   const count = 100
   const keys = []

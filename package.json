@@ -9,14 +9,11 @@
   "license": "MIT",
   "author": "Kirill Fomichev <fanatid@ya.ru>",
   "contributors": [],
-  "files": [
-    "lib",
-    "src",
-    "index.js"
-  ],
-  "main": "./index.js",
+  "files": [],
+  "main": "./lib/index.js",
   "browser": {
-    "./lib/wasm/bin.js": "./lib/wasm/bin-browser.js"
+    "./lib/impl.js": "./lib/impl-browser.js",
+    "./lib/wasm/wasm-bin.js": "./lib/wasm/wasm-bin-browser.js"
   },
   "repository": {
     "type": "git",

@@ -1,8 +1,8 @@
 build/
 node_modules/
 
-lib/wasm/glue.js
-lib/wasm/bin-browser.js
+lib/wasm/wasm-glue.js
+lib/wasm/wasm-bin-browser.js
 
 fcrypto-darwin-x64.node
 fcrypto-linux-x64.node
