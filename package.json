@@ -15,6 +15,9 @@
     "binding.gyp"
   ],
   "main": "./lib/index.js",
+  "browser": {
+    "./lib/wasm/bin-node.js": "./lib/wasm/bin-browser.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/fanatid/fcrypto.git"

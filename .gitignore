@@ -2,6 +2,7 @@ build/
 node_modules/
 
 lib/wasm/glue.js
+lib/wasm/bin-browser.js
 
 fcrypto*
 

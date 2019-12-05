@@ -1,17 +1,49 @@
 .PHONY: all
 all: wasm-build
 
+addon-build: addon-build-copy
+
+addon-build-copy:
+	echo 'todo'
+
 wasm_build_dir = build/wasm
 wasm_build_dir_js = lib/wasm
 wasm_build_opts = -O3
 
-wasm-build: wasm-build-docker-image wasm-build-libs wasm-build-fcrypto wasm-build-js
+wasm-build: wasm-build-docker-image wasm-build-libs wasm-build-fcrypto wasm-build-copy wasm-build-jsglue
 
 wasm-build-docker-image:
 	@if [ "`id -u`" -ne 1000 ] || [ "`id -g`" -ne 1000 ]; then \
 		echo 'User id and group id, both should be 1000'; exit 1; \
 	else true; fi
 	docker build -t fcrypto-build-wasm -f wasm.dockerfile .
+
+wasm-build-libs: wasm-build-secp256k1
+
+wasm-build-secp256k1:
+	mkdir -p $(wasm_build_dir)/secp256k1
+	rsync -a --delete src/secp256k1/ $(wasm_build_dir)/secp256k1/
+	# Definitions from binding.gyp (x32)
+	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
+		emcc \
+			-o $(wasm_build_dir)/secp256k1.o \
+			$(wasm_build_opts) \
+			-c \
+			-D USE_EXTERNAL_DEFAULT_CALLBACKS=1 \
+			-D ECMULT_GEN_PREC_BITS=4 \
+			-D ECMULT_WINDOW_SIZE=15 \
+			-D ENABLE_MODULE_ECDH=1 \
+			-D ENABLE_MODULE_RECOVERY=1 \
+			-D USE_ENDOMORPHISM=1 \
+			-D USE_NUM_NONE=1 \
+			-D USE_FIELD_INV_BUILTIN=1 \
+			-D USE_SCALAR_INV_BUILTIN=1 \
+			-D USE_FIELD_10X26=1 \
+			-D USE_SCALAR_8X32=1 \
+			-I$(wasm_build_dir)/secp256k1 \
+			-I$(wasm_build_dir)/secp256k1/src \
+			-Wno-unused-function \
+			$(wasm_build_dir)/secp256k1/src/secp256k1.c
 
 wasm-build-fcrypto:
 	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
@@ -49,39 +81,17 @@ wasm-build-fcrypto:
 			-Wextra \
 			$(wasm_build_dir)/secp256k1.o \
 			src/fcrypto/secp256k1.c
+
+wasm-build-copy:
+	# copy wasm file
 	cp -u $(wasm_build_dir)/fcrypto.wasm fcrypto.wasm
-
-wasm-build-libs: wasm-build-secp256k1
-
-wasm-build-secp256k1:
-	mkdir -p $(wasm_build_dir)/secp256k1
-	rsync -a --delete src/secp256k1/ $(wasm_build_dir)/secp256k1/
-	# Definitions from binding.gyp (x32)
-	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
-		emcc \
-			-o $(wasm_build_dir)/secp256k1.o \
-			$(wasm_build_opts) \
-			-c \
-			-D USE_EXTERNAL_DEFAULT_CALLBACKS=1 \
-			-D ECMULT_GEN_PREC_BITS=4 \
-			-D ECMULT_WINDOW_SIZE=15 \
-			-D ENABLE_MODULE_ECDH=1 \
-			-D ENABLE_MODULE_RECOVERY=1 \
-			-D USE_ENDOMORPHISM=1 \
-			-D USE_NUM_NONE=1 \
-			-D USE_FIELD_INV_BUILTIN=1 \
-			-D USE_SCALAR_INV_BUILTIN=1 \
-			-D USE_FIELD_10X26=1 \
-			-D USE_SCALAR_8X32=1 \
-			-I$(wasm_build_dir)/secp256k1 \
-			-I$(wasm_build_dir)/secp256k1/src \
-			-Wno-unused-function \
-			$(wasm_build_dir)/secp256k1/src/secp256k1.c
-
-wasm-build-js: wasm-build-jsglue
+	# generate base64 for browser
+	util/wasm-build-base64.js \
+		-i $(wasm_build_dir)/fcrypto.wasm \
+		-o $(wasm_build_dir_js)/bin-browser.js
 
 wasm-build-jsglue:
-	util/wasm-parse-emscripten-jsglue.js \
+	util/wasm-build-jsglue.js \
 		-i $(wasm_build_dir)/fcrypto.js \
 		-o $(wasm_build_dir_js)/glue.js
 
