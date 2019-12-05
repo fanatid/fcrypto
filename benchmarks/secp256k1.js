@@ -5,7 +5,7 @@ function diffTime (time, resolution = 'milliseconds') {
   return diff[0] * 1e3 + diff[1] / 1e6
 }
 
-async function initWasm () {
+async function initWasm2 () {
   const fs = require('fs')
   const path = require('path')
   const code = fs.readFileSync(path.join(__dirname, '..', 'build', 'wasm', 'fcrypto.wasm'))
@@ -107,10 +107,10 @@ function runBench (what, count, fn) {
 
 ;(async () => {
   const { randomBytes } = require('crypto')
-  const { secp256k1: addon } = require('bindings')('addon')
-  const wasm = await initWasm()
+  const { secp256k1: addon } = await require('../lib/addon')()
+  const wasm = await require('../lib/wasm')()
 
-  const count = 50 * 1000
+  const count = 100
   const keys = []
   while (keys.length < count) {
     const seckey = randomBytes(32)

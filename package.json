@@ -12,11 +12,11 @@
   "files": [
     "lib",
     "src",
-    "binding.gyp"
+    "index.js"
   ],
-  "main": "./lib/index.js",
+  "main": "./index.js",
   "browser": {
-    "./lib/wasm/bin-node.js": "./lib/wasm/bin-browser.js"
+    "./lib/wasm/bin.js": "./lib/wasm/bin-browser.js"
   },
   "repository": {
     "type": "git",

@@ -41,7 +41,7 @@ function parseContent (content) {
   const imRE = new RegExp('var asmLibraryArg = {(.*?)};', 'sm')
   const IMPORT_MAP = content.match(imRE)[1]
 
-  const emRE = new RegExp('Module\\["(\\w+)"] = function\\(\\) {\n return Module\\["asm"]\\["(\\w+)"].apply\\(null, arguments\\);', 'g')
+  const emRE = new RegExp('Module\\["_(\\w+)"] = function\\(\\) {\n return Module\\["asm"]\\["(\\w+)"].apply\\(null, arguments\\);', 'g')
   const EXPORT_MAP = content.matchAll(emRE)
 
   return {

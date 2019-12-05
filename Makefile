@@ -27,7 +27,7 @@ build-wasm-docker-image:
 	@if [ "`id -u`" -ne 1000 ] || [ "`id -g`" -ne 1000 ]; then \
 		echo 'User id and group id, both should be 1000'; exit 1; \
 	else true; fi
-	docker build -t fcrypto-build-wasm -f wasm.dockerfile .
+	docker build -t fcrypto-build-wasm -f util/wasm.dockerfile .
 
 build-wasm-libs: build-wasm-secp256k1
 

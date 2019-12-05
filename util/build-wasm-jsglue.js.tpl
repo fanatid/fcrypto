@@ -39,7 +39,7 @@ const importObject = {
 }
 
 module.exports = {
+  heapu8: HEAPU8,
   importObject,
-  heap8: HEAPU8,
   exportMap: {{ EXPORT_MAP }},
 }
