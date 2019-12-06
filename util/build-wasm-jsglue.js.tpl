@@ -18,15 +18,17 @@ const wasmTable = new WebAssembly.Table({
   element: 'anyfunc',
 })
 
-function abort (what) {
-  throw new WebAssembly.RuntimeError(`abort(${what}). Build with -s ASSERTIONS=1 for more info.`)
+function abort(what) {
+  throw new WebAssembly.RuntimeError(
+    `abort(${what}). Build with -s ASSERTIONS=1 for more info.`
+  )
 }
 
 function _emscripten_get_heap_size() {
   return HEAPU8.length
 }
 
-function _emscripten_resize_heap () {
+function _emscripten_resize_heap() {
   abort('OOM')
 }
 

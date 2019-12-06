@@ -1,0 +1,6 @@
+arrowParens: "always"
+semi: false
+singleQuote: true
+trailingComma: "es5"
+plugins: ["prettier-plugin-packagejson"]
+printWidth: 80

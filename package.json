@@ -2,34 +2,32 @@
   "name": "fcrypto",
   "version": "0.0.1",
   "description": "Another attempt implement fast cryptography for JavaScript",
-  "keywords": [],
+  "keywords": [
+    "secp256k1"
+  ],
   "bugs": {
     "url": "https://github.com/fanatid/fcrypto/issues"
-  },
-  "license": "MIT",
-  "author": "Kirill Fomichev <fanatid@ya.ru>",
-  "contributors": [],
-  "files": [],
-  "main": "./lib/index.js",
-  "browser": {
-    "./lib/impl.js": "./lib/impl-browser.js",
-    "./lib/wasm/wasm-bin.js": "./lib/wasm/wasm-bin-browser.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/fanatid/fcrypto.git"
   },
-  "scripts": {
-    "format": "clang-format -i -verbose src/addon/* src/fcrypto/* && echo 'todo prettier'",
-    "lint": "standard",
-    "test": "npm run lint"
+  "license": "MIT",
+  "author": "Kirill Fomichev <fanatid@ya.ru>",
+  "main": "./lib/index.js",
+  "browser": {
+    "./lib/impl.js": "./lib/impl-browser.js",
+    "./lib/wasm/wasm-bin.js": "./lib/wasm/wasm-bin-browser.js"
   },
-  "dependencies": {},
   "devDependencies": {
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-prettier": "^3.1.1",
     "lodash": "^4.17.15",
     "node-addon-api": "^2.0.0",
     "node-gyp": "^6.0.1",
-    "standard": "^14.3.1",
+    "prettier": "^1.19.1",
+    "prettier-plugin-packagejson": "^2.0.5",
     "yargs": "^15.0.2"
   },
   "engines": {

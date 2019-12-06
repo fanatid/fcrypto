@@ -7,11 +7,10 @@
 // See `wasm-parse-emscripten-jsglue.js.tpl` as template and `lib/wasm/glue.js` as result.
 
 const fs = require('fs')
-const path = require('path')
 const lodash = require('lodash')
 const yargs = require('yargs')
 
-function getArgs () {
+function getArgs() {
   return yargs
     .usage('Usage: $0 <command> [options]')
     .wrap(yargs.terminalWidth())
@@ -27,21 +26,32 @@ function getArgs () {
         type: 'string',
       },
     })
-    .help('help').alias('help', 'h')
-    .argv
+    .help('help')
+    .alias('help', 'h').argv
 }
 
-function parseContent (content) {
+function parseContent(content) {
   const WASM_PAGE_SIZE = content.match(/var WASM_PAGE_SIZE = (\d+);/)
-  const INITIAL_TOTAL_MEMORY = content.match(/var INITIAL_TOTAL_MEMORY = (\d+);/)
-  const WASM_MEMORY = content.match(/WebAssembly\.Memory\({\n  "initial": (.*?),\n  "maximum": (.*?)\n/)
-  const DYNAMIC = content.match(/var DYNAMIC_BASE = (\d+), DYNAMICTOP_PTR = (\d+);/)
-  const WASM_TABLE = content.match(/WebAssembly.Table\({\n "initial": (\d+),\n "maximum": (\d+),/)
+  const INITIAL_TOTAL_MEMORY = content.match(
+    /var INITIAL_TOTAL_MEMORY = (\d+);/
+  )
+  const WASM_MEMORY = content.match(
+    /WebAssembly\.Memory\({\n {2}"initial": (.*?),\n {2}"maximum": (.*?)\n/
+  )
+  const DYNAMIC = content.match(
+    /var DYNAMIC_BASE = (\d+), DYNAMICTOP_PTR = (\d+);/
+  )
+  const WASM_TABLE = content.match(
+    /WebAssembly.Table\({\n "initial": (\d+),\n "maximum": (\d+),/
+  )
 
   const imRE = new RegExp('var asmLibraryArg = {(.*?)};', 'sm')
   const IMPORT_MAP = content.match(imRE)[1]
 
-  const emRE = new RegExp('Module\\["_(\\w+)"] = function\\(\\) {\n return Module\\["asm"]\\["(\\w+)"].apply\\(null, arguments\\);', 'g')
+  const emRE = new RegExp(
+    'Module\\["_(\\w+)"] = function\\(\\) {\\n return Module\\["asm"]\\["(\\w+)"].apply\\(null, arguments\\);',
+    'g'
+  )
   const EXPORT_MAP = content.matchAll(emRE)
 
   return {
@@ -58,8 +68,19 @@ function parseContent (content) {
     WASM_TABLE_MAXIMUM: parseInt(WASM_TABLE[2], 10),
 
     // maps
-    IMPORT_MAP: ['{', ...IMPORT_MAP.replace(/^ "(\w+)": (\w+),?$/gm, '$1: $2,').split('\n').slice(1, -1).map((x) => `    ${x}`), '  }'].join('\n'),
-    EXPORT_MAP: ['{', ...Array.from(EXPORT_MAP, (m) => `    ${m[1]}: '${m[2]}',`), '  }'].join('\n'),
+    IMPORT_MAP: [
+      '{',
+      ...IMPORT_MAP.replace(/^ "(\w+)": (\w+),?$/gm, '$1: $2,')
+        .split('\n')
+        .slice(1, -1)
+        .map((x) => `    ${x}`),
+      '  }',
+    ].join('\n'),
+    EXPORT_MAP: [
+      '{',
+      ...Array.from(EXPORT_MAP, (m) => `    ${m[1]}: '${m[2]}',`),
+      '  }',
+    ].join('\n'),
   }
 }
 

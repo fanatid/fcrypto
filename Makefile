@@ -121,3 +121,34 @@ clean:
 		fcrypto-darwin-x64.node \
 		fcrypto-linux-x64.node \
 		fcrypto-win32-x64.node
+
+
+eslint = ./node_modules/.bin/eslint
+prettier = ./node_modules/.bin/prettier
+
+format_cpp_files = src/addon/* src/fcrypto/*
+format_js_files = benchmarks/**/*.js lib/**/*.js util/**/*.js
+
+format: format-cpp format-js
+
+format-cpp:
+	clang-format -i -verbose $(format_cpp_files)
+
+format-js:
+	$(eslint) --fix $(format_js_files)
+	$(prettier) --write package.json
+
+
+lint: lint-cpp lint-js
+
+lint-cpp:
+	mkdir -p build/src
+	rsync -a --delete src/ build/src/
+	cd build && clang-format -i -verbose $(format_cpp_files)
+	git diff --no-index --exit-code src build/src
+
+lint-js:
+	$(eslint) $(format_js_files)
+	mkdir -p build
+	$(prettier) package.json > build/package.json
+	git diff --no-index --exit-code package.json build/package.json

@@ -5,7 +5,7 @@
 const fs = require('fs')
 const yargs = require('yargs')
 
-function getArgs () {
+function getArgs() {
   return yargs
     .usage('Usage: $0 <command> [options]')
     .wrap(yargs.terminalWidth())
@@ -21,12 +21,16 @@ function getArgs () {
         type: 'string',
       },
     })
-    .help('help').alias('help', 'h')
-    .argv
+    .help('help')
+    .alias('help', 'h').argv
 }
 
-function getContent (buffer) {
-  return `module.exports = Promise.resolve(Buffer.from('${buffer.toString('base64')}', 'base64'))`
+function getContent(buffer) {
+  return `const text =
+  '${buffer.toString('base64')}'
+
+module.exports = Promise.resolve(Buffer.from(text, 'base64'))
+`
 }
 
 const args = getArgs()
