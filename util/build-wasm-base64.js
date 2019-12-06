@@ -26,10 +26,12 @@ function getArgs() {
 }
 
 function getContent(buffer) {
-  return `const text =
+  return `const base64 = require('base64-js')
+
+const text =
   '${buffer.toString('base64')}'
 
-module.exports = Promise.resolve(Buffer.from(text, 'base64'))
+module.exports = new Promise((resolve) => resolve(base64.toByteArray(text)))
 `
 }
 
