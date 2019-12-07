@@ -1,4 +1,8 @@
-.PHONY: all
+.PHONY: all build build-addon build-addon-fcrypto build-addon-copy build-wasm \
+	build-wasm-docker-image build-wasm-libs build-wasm-secp256k1 \
+	build-wasm-fcrypto build-wasm-copy build-wasm-jsglue build-wasm-wat clean \
+	format format-cpp format-js lint lint-cpp lint-js test
+
 all: build-wasm
 
 
@@ -152,3 +156,9 @@ lint-js:
 	mkdir -p build
 	$(prettier) package.json > build/package.json
 	git diff --no-index --exit-code package.json build/package.json
+
+
+test_files = test/*.js
+
+test:
+	node $(test_files)
