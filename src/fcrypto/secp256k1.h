@@ -50,7 +50,7 @@ int fcrypto_secp256k1_seckey_tweak_mul(const secp256k1_context* ctx,
 int fcrypto_secp256k1_pubkey_create(const secp256k1_context* ctx,
                                     unsigned char* output,
                                     const unsigned char* seckey,
-                                    int compressed);
+                                    size_t outputlen);
 
 /** Reserialize public key to another format.
  *  Returns: 0: on success
@@ -61,7 +61,7 @@ int fcrypto_secp256k1_pubkey_convert(const secp256k1_context* ctx,
                                      unsigned char* output,
                                      const unsigned char* input,
                                      size_t inputlen,
-                                     int compressed);
+                                     size_t outputlen);
 
 /** Negates a public key in place.
  *  Returns: 0: on success
@@ -71,7 +71,7 @@ int fcrypto_secp256k1_pubkey_negate(const secp256k1_context* ctx,
                                     unsigned char* output,
                                     const unsigned char* input,
                                     size_t inputlen,
-                                    int compressed);
+                                    size_t outputlen);
 
 /** Add a number of public keys together.
  *  Returns: 0: the sum of the public keys is valid
@@ -83,7 +83,7 @@ int fcrypto_secp256k1_pubkey_combine(const secp256k1_context* ctx,
                                      const unsigned char* const* inputs,
                                      const size_t* inputslen,
                                      size_t n,
-                                     int compressed);
+                                     size_t outputlen);
 
 /** Tweak a public key by adding tweak times the generator to it.
  *  Returns: 0: on success
@@ -96,7 +96,7 @@ int fcrypto_secp256k1_pubkey_tweak_add(const secp256k1_context* ctx,
                                        const unsigned char* input,
                                        size_t inputlen,
                                        const unsigned char* tweak,
-                                       int compressed);
+                                       size_t outputlen);
 
 /** Tweak a public key by multiplying it by a tweak value.
  *  Returns: 0: on success
@@ -108,7 +108,7 @@ int fcrypto_secp256k1_pubkey_tweak_mul(const secp256k1_context* ctx,
                                        const unsigned char* input,
                                        size_t inputlen,
                                        const unsigned char* tweak,
-                                       int compressed);
+                                       size_t outputlen);
 
 /** Convert a signature to a normalized lower-S form in place.
  *  Returns: 0: on success
@@ -171,7 +171,7 @@ int fcrypto_secp256k1_ecdsa_recover(const secp256k1_context* ctx,
                                     const unsigned char* sig,
                                     int recid,
                                     const unsigned char* msg32,
-                                    int compressed);
+                                    size_t outputlen);
 
 /** Compute an EC Diffie-Hellman secret in constant time.
  *  Returns: 0: exponentiation was successful
@@ -195,7 +195,7 @@ int fcrypto_secp256k1_ecdh_unsafe(const secp256k1_context* ctx,
                                   const unsigned char* input,
                                   size_t inputlen,
                                   const unsigned char* seckey,
-                                  int compressed);
+                                  size_t outputlen);
 
 #ifdef __cplusplus
 }

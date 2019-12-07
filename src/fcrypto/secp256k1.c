@@ -28,11 +28,10 @@ void secp256k1_default_error_callback_fn(const char* str, void* data) {
     }                                   \
   } while (0)
 
-#define PUBKEY_SERIALIZE(ctx, output, pubkey, compressed, retcode)             \
+#define PUBKEY_SERIALIZE(ctx, output, pubkey, outputlen, retcode)              \
   do {                                                                         \
-    size_t outputlen = compressed ? 33 : 65;                                   \
     int flags =                                                                \
-        compressed ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED;      \
+        outputlen == 33 ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED; \
     RETURN_IF_ZERO(                                                            \
         secp256k1_ec_pubkey_serialize(ctx, output, &outputlen, pubkey, flags), \
         retcode);                                                              \
@@ -76,10 +75,10 @@ int fcrypto_secp256k1_seckey_tweak_mul(const secp256k1_context* ctx,
 int fcrypto_secp256k1_pubkey_create(const secp256k1_context* ctx,
                                     unsigned char* output,
                                     const unsigned char* seckey,
-                                    int compressed) {
+                                    size_t outputlen) {
   secp256k1_pubkey pubkey;
   RETURN_IF_ZERO(secp256k1_ec_pubkey_create(ctx, &pubkey, seckey), 1);
-  PUBKEY_SERIALIZE(ctx, output, &pubkey, compressed, 2);
+  PUBKEY_SERIALIZE(ctx, output, &pubkey, outputlen, 2);
   return 0;
 }
 
@@ -87,10 +86,10 @@ int fcrypto_secp256k1_pubkey_convert(const secp256k1_context* ctx,
                                      unsigned char* output,
                                      const unsigned char* input,
                                      size_t inputlen,
-                                     int compressed) {
+                                     size_t outputlen) {
   secp256k1_pubkey pubkey;
   RETURN_IF_ZERO(secp256k1_ec_pubkey_parse(ctx, &pubkey, input, inputlen), 1);
-  PUBKEY_SERIALIZE(ctx, output, &pubkey, compressed, 2);
+  PUBKEY_SERIALIZE(ctx, output, &pubkey, outputlen, 2);
   return 0;
 }
 
@@ -98,7 +97,7 @@ int fcrypto_secp256k1_pubkey_convert(const secp256k1_context* ctx,
 //                                     unsigned char* output,
 //                                     const unsigned char* input,
 //                                     size_t inputlen,
-//                                     int compressed) {
+//                                     size_t outputlen) {
 //   return 0;
 // }
 
@@ -107,7 +106,7 @@ int fcrypto_secp256k1_pubkey_convert(const secp256k1_context* ctx,
 //                                      const unsigned char* const* inputs,
 //                                      const size_t* inputslen,
 //                                      size_t n,
-//                                      int compressed) {
+//                                      size_t outputlen) {
 //   return 0;
 // }
 
@@ -116,7 +115,7 @@ int fcrypto_secp256k1_pubkey_convert(const secp256k1_context* ctx,
 //                                        const unsigned char* input,
 //                                        size_t inputlen,
 //                                        const unsigned char* tweak,
-//                                        int compressed) {
+//                                        size_t outputlen) {
 //   return 0;
 // }
 
@@ -125,7 +124,7 @@ int fcrypto_secp256k1_pubkey_convert(const secp256k1_context* ctx,
 //                                        const unsigned char* input,
 //                                        size_t inputlen,
 //                                        const unsigned char* tweak,
-//                                        int compressed) {
+//                                        size_t outputlen) {
 //   return 0;
 // }
 
@@ -188,7 +187,7 @@ int fcrypto_secp256k1_ecdsa_verify(const secp256k1_context* ctx,
 //                                     const unsigned char* sig,
 //                                     int recid,
 //                                     const unsigned char* msg32,
-//                                     int compressed) {
+//                                     size_t outputlen) {
 //   return 0;
 // }
 
@@ -206,6 +205,6 @@ int fcrypto_secp256k1_ecdsa_verify(const secp256k1_context* ctx,
 //                                   const unsigned char* input,
 //                                   size_t inputlen,
 //                                   const unsigned char* seckey,
-//                                   int compressed) {
+//                                   size_t outputlen) {
 //   return 0;
 // }

@@ -2,7 +2,9 @@
 
 #define RET(result) return Napi::Number::New(info.Env(), result);
 
-Napi::Value Secp256k1Addon::New(Napi::Env env) {
+Napi::FunctionReference Secp256k1Addon::constructor;
+
+Napi::Value Secp256k1Addon::Init(Napi::Env env) {
   Napi::Function func = DefineClass(
       env, "Secp256k1Addon",
       {
@@ -35,16 +37,25 @@ Napi::Value Secp256k1Addon::New(Napi::Env env) {
           InstanceMethod("ecdhUnsafe", &Secp256k1Addon::ECDHUnsafe),
       });
 
-  return func.New({});
+  constructor = Napi::Persistent(func);
+  constructor.SuppressDestruct();
+
+  return func;
 }
 
 Secp256k1Addon::Secp256k1Addon(const Napi::CallbackInfo& info)
     : Napi::ObjectWrap<Secp256k1Addon>(info) {
   ctx_ = fcrypto_secp256k1_context_create();
+
+  // size_t size = fcrypto_secp256k1_context_size();
+  // Napi::MemoryManagement::AdjustExternalMemory(info.Env(), size);
 }
 
 Secp256k1Addon::~Secp256k1Addon() {
   fcrypto_secp256k1_context_destroy(const_cast<secp256k1_context*>(ctx_));
+
+  // size_t size = fcrypto_secp256k1_context_size();
+  // Napi::MemoryManagement::AdjustExternalMemory(info.Env(), -size);
 }
 
 // PrivateKey
@@ -78,9 +89,9 @@ Napi::Value Secp256k1Addon::PrivateKeyTweakMul(const Napi::CallbackInfo& info) {
 Napi::Value Secp256k1Addon::PublicKeyCreate(const Napi::CallbackInfo& info) {
   auto output = info[0].As<Napi::Buffer<unsigned char>>().Data();
   auto seckey = info[1].As<Napi::Buffer<const unsigned char>>().Data();
-  int compressed = info[2].As<Napi::Boolean>().Value() ? 1 : 0;
+  auto outputlen = info[2].As<Napi::Number>().Int32Value();
 
-  RET(fcrypto_secp256k1_pubkey_create(this->ctx_, output, seckey, compressed));
+  RET(fcrypto_secp256k1_pubkey_create(this->ctx_, output, seckey, outputlen));
 }
 
 Napi::Value Secp256k1Addon::PublicKeyConvert(const Napi::CallbackInfo& info) {
@@ -121,9 +132,7 @@ Napi::Value Secp256k1Addon::ECDSASign(const Napi::CallbackInfo& info) {
   auto env = info.Env();
 
   auto obj = info[0].As<Napi::Object>();
-  auto output = obj.Get(Napi::String::New(env, "signature"))
-                    .As<Napi::Buffer<unsigned char>>()
-                    .Data();
+  auto output = obj.Get("signature").As<Napi::Buffer<unsigned char>>().Data();
   int recid;
   auto msg32 = info[1].As<Napi::Buffer<unsigned char>>().Data();
   auto seckey = info[2].As<Napi::Buffer<const unsigned char>>().Data();
@@ -131,7 +140,7 @@ Napi::Value Secp256k1Addon::ECDSASign(const Napi::CallbackInfo& info) {
   int ret =
       fcrypto_secp256k1_ecdsa_sign(this->ctx_, output, &recid, msg32, seckey);
   if (ret == 0) {
-    obj.Set(Napi::String::New(env, "recid"), recid);
+    obj.Set("recid", recid);
   }
 
   return Napi::Number::New(env, ret);

@@ -16,43 +16,48 @@ function runBench(what, count, fn) {
 
 ;(async () => {
   const { randomBytes } = require('crypto')
-  const { secp256k1: addon } = await require('../')('addon')
-  const wasm = await require('../')('wasm')
+
+  const addon = await require('../').load('addon')
+  addon.secp256k1.init()
+
+  const wasm = await require('../').load('wasm')
+  wasm.secp256k1.init()
 
   const count = 100
   const keys = []
   while (keys.length < count) {
     const seckey = randomBytes(32)
-    if (addon.privateKeyVerify(seckey) !== 0) continue
+    if (!addon.secp256k1.privateKeyVerify(seckey)) continue
 
-    const pubkey = Buffer.allocUnsafe(33)
-    if (addon.publicKeyCreate(pubkey, seckey, true) !== 0) continue
-
-    keys.push({ seckey, pubkey, msg32: Buffer.allocUnsafe(32) })
+    const pubkey = addon.secp256k1.publicKeyCreate(seckey)
+    keys.push({ seckey, pubkey, msg32: randomBytes(32) })
   }
 
   const sigs = new Array(keys.length)
     .fill(null)
     .map(() => ({ signature: Buffer.allocUnsafe(64), recid: -1 }))
 
-  const pubkey = Buffer.allocUnsafe(33)
   runBench('addon pubkey create', keys.length, (i) =>
-    addon.publicKeyCreate(pubkey, keys[i].seckey, true)
+    addon.secp256k1.publicKeyCreate(keys[i].seckey)
   )
   runBench('wasm pubkey create', keys.length, (i) =>
-    wasm.publicKeyCreate(pubkey, keys[i].seckey, true)
+    wasm.secp256k1.publicKeyCreate(keys[i].seckey)
   )
   runBench('addon sign', keys.length, (i) =>
-    addon.ecdsaSign(sigs[i], keys[i].msg32, keys[i].seckey)
+    addon.secp256k1.ecdsaSign(keys[i].msg32, keys[i].seckey, sigs[i].signature)
   )
   runBench('wasm sign', keys.length, (i) =>
-    wasm.ecdsaSign(sigs[i], keys[i].msg32, keys[i].seckey)
+    wasm.secp256k1.ecdsaSign(keys[i].msg32, keys[i].seckey, sigs[i].signature)
   )
   runBench('addon verify', keys.length, (i) =>
-    addon.ecdsaVerify(sigs[i].signature, keys[i].msg32, keys[i].pubkey)
+    addon.secp256k1.ecdsaVerify(
+      sigs[i].signature,
+      keys[i].msg32,
+      keys[i].pubkey
+    )
   )
   runBench('wasm verify', keys.length, (i) =>
-    wasm.ecdsaVerify(sigs[i].signature, keys[i].msg32, keys[i].pubkey)
+    wasm.secp256k1.ecdsaVerify(sigs[i].signature, keys[i].msg32, keys[i].pubkey)
   )
 })().catch((err) => {
   console.error(err.stack || err)

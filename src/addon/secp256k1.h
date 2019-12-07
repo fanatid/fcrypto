@@ -5,14 +5,15 @@
 #include <napi.h>
 
 class Secp256k1Addon : public Napi::ObjectWrap<Secp256k1Addon> {
- private:
-  const secp256k1_context* ctx_;
-
  public:
-  static Napi::Value New(Napi::Env env);
+  static Napi::Value Init(Napi::Env env);
 
   Secp256k1Addon(const Napi::CallbackInfo& info);
   ~Secp256k1Addon();
+
+ private:
+  const secp256k1_context* ctx_;
+  static Napi::FunctionReference constructor;
 
   Napi::Value PrivateKeyVerify(const Napi::CallbackInfo& info);
   Napi::Value PrivateKeyNegate(const Napi::CallbackInfo& info);

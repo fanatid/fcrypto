@@ -3,7 +3,7 @@
 #include <napi.h>
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
-  exports.Set(Napi::String::New(env, "secp256k1"), Secp256k1Addon::New(env));
+  exports.Set("Secp256k1", Secp256k1Addon::Init(env));
   return exports;
 }
 
