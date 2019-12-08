@@ -131,7 +131,7 @@ eslint = ./node_modules/.bin/eslint
 prettier = ./node_modules/.bin/prettier
 
 format_cpp_files = src/addon/* src/fcrypto/*
-format_js_files = benchmarks/**/*.js lib/**/*.js util/**/*.js
+format_js_files = benchmarks/**/*.js lib/**/*.js test/**/*.js util/**/*.js
 
 format: format-cpp format-js
 
@@ -158,7 +158,11 @@ lint-js:
 	git diff --no-index --exit-code package.json build/package.json
 
 
+test_reporter = ./node_modules/.bin/tap-dot
 test_files = test/*.js
 
 test:
+	node $(test_files) | $(test_reporter)
+
+test-tap:
 	node $(test_files)
