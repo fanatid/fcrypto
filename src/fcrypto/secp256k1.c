@@ -1,4 +1,5 @@
 #include <fcrypto/secp256k1.h>
+#include <secp256k1/include/secp256k1_preallocated.h>
 #include <secp256k1/include/secp256k1_recovery.h>
 
 #include <stdio.h>
@@ -38,6 +39,11 @@ void secp256k1_default_error_callback_fn(const char* str, void* data) {
   } while (0)
 
 // Context
+size_t fcrypto_secp256k1_context_size() {
+  return secp256k1_context_preallocated_size(SECP256K1_CONTEXT_SIGN |
+                                             SECP256K1_CONTEXT_VERIFY);
+}
+
 secp256k1_context* fcrypto_secp256k1_context_create() {
   return secp256k1_context_create(SECP256K1_CONTEXT_SIGN |
                                   SECP256K1_CONTEXT_VERIFY);

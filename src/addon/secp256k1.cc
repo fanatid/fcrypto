@@ -49,15 +49,15 @@ Secp256k1Addon::Secp256k1Addon(const Napi::CallbackInfo& info)
     : Napi::ObjectWrap<Secp256k1Addon>(info) {
   ctx_ = fcrypto_secp256k1_context_create();
 
-  // size_t size = fcrypto_secp256k1_context_size();
-  // Napi::MemoryManagement::AdjustExternalMemory(info.Env(), size);
+  size_t size = fcrypto_secp256k1_context_size();
+  Napi::MemoryManagement::AdjustExternalMemory(info.Env(), size);
 }
 
-Secp256k1Addon::~Secp256k1Addon() {
+void Secp256k1Addon::Finalize(Napi::Env env) {
   fcrypto_secp256k1_context_destroy(const_cast<secp256k1_context*>(ctx_));
 
-  // size_t size = fcrypto_secp256k1_context_size();
-  // Napi::MemoryManagement::AdjustExternalMemory(info.Env(), -size);
+  size_t size = fcrypto_secp256k1_context_size();
+  Napi::MemoryManagement::AdjustExternalMemory(env, -size);
 }
 
 Napi::Value Secp256k1Addon::Randomize(const Napi::CallbackInfo& info) {

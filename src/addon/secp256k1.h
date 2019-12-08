@@ -9,7 +9,7 @@ class Secp256k1Addon : public Napi::ObjectWrap<Secp256k1Addon> {
   static Napi::Value Init(Napi::Env env);
 
   Secp256k1Addon(const Napi::CallbackInfo& info);
-  ~Secp256k1Addon();
+  void Finalize(Napi::Env env);
 
  private:
   const secp256k1_context* ctx_;

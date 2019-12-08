@@ -7,6 +7,7 @@ extern "C" {
 
 #include <secp256k1/include/secp256k1.h>
 
+size_t fcrypto_secp256k1_context_size();
 secp256k1_context* fcrypto_secp256k1_context_create();
 void fcrypto_secp256k1_context_destroy(secp256k1_context* ctx);
 
