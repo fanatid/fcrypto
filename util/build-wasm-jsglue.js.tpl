@@ -18,21 +18,24 @@ const wasmTable = new WebAssembly.Table({
   element: 'anyfunc',
 })
 
-function abort(what) {
+function abort (what) {
   throw new WebAssembly.RuntimeError(
     `abort(${what}). Build with -s ASSERTIONS=1 for more info.`
   )
 }
 
-function _emscripten_get_heap_size() {
+// eslint-disable-next-line camelcase
+function _emscripten_get_heap_size () {
   return heapu8.length
 }
 
-function _emscripten_resize_heap() {
+// eslint-disable-next-line camelcase
+function _emscripten_resize_heap () {
   abort('OOM')
 }
 
-function _emscripten_memcpy_big(dest, src, num) {
+// eslint-disable-next-line camelcase
+function _emscripten_memcpy_big (dest, src, num) {
   heapu8.set(heapu8.subarray(src, src + num), dest)
 }
 

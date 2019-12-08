@@ -1,11 +1,11 @@
-function diffTime(time) {
+function diffTime (time) {
   if (time === undefined) return process.hrtime()
 
   const diff = process.hrtime(time)
   return diff[0] * 1e3 + diff[1] / 1e6
 }
 
-function runBench(what, count, fn) {
+function runBench (what, count, fn) {
   const ts = diffTime()
   for (let i = 0; i < count; ++i) fn(i)
   const ms = diffTime(ts)

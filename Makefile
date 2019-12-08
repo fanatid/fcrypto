@@ -128,10 +128,12 @@ clean:
 
 
 eslint = ./node_modules/.bin/eslint
-prettier = ./node_modules/.bin/prettier
+prettier = ./node_modules/.bin/prettier-standard
 
 format_cpp_files = src/addon/* src/fcrypto/*
-format_js_files = benchmarks/**/*.js lib/**/*.js test/**/*.js util/**/*.js
+# format_js_files = benchmarks/*.js lib/*.js lib/**/*.js test/*.js util/*.js
+format_js_files = benchmarks/*.js lib/*.js lib/**/*.js test/*.js util/*.js package.json
+lint_dir = build/lint
 
 format: format-cpp format-js
 
@@ -139,23 +141,24 @@ format-cpp:
 	clang-format -i -verbose $(format_cpp_files)
 
 format-js:
-	$(eslint) --fix $(format_js_files)
-	$(prettier) --write package.json
+	$(prettier) --lint $(format_js_files)
 
 
 lint: lint-cpp lint-js
 
 lint-cpp:
-	mkdir -p build/src
-	rsync -a --delete src/ build/src/
-	cd build && clang-format -i -verbose $(format_cpp_files)
-	git diff --no-index --exit-code src build/src
+	mkdir -p $(lint_dir)/cpp/src
+	rsync -a --delete src/ $(lint_dir)/cpp/src
+	cd $(lint_dir)/cpp && clang-format -i -verbose $(format_cpp_files)
+	git diff --no-index --exit-code src $(lint_dir)/cpp/src
 
+# super hucky, wish https://github.com/prettier/prettier/issues/4612
 lint-js:
-	$(eslint) $(format_js_files)
-	mkdir -p build
-	$(prettier) package.json > build/package.json
-	git diff --no-index --exit-code package.json build/package.json
+	mkdir -p $(lint_dir)/js/src $(lint_dir)/js/dst
+	rsync -a --delete --exclude=build --exclude=node_modules . $(lint_dir)/js/src
+	rsync -a --delete --exclude=build --exclude=node_modules . $(lint_dir)/js/dst
+	cd $(lint_dir)/js/dst && ../../../../$(prettier) $(format_js_files)
+	git diff --no-index --exit-code $(lint_dir)/js/src $(lint_dir)/js/dst
 
 
 test_reporter = ./node_modules/.bin/tap-dot

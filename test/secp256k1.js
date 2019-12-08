@@ -1,7 +1,7 @@
 const test = require('tape')
 const fcrypto = require('../')
 
-function createTests(type) {
+function createTests (type) {
   const prefix = `${type}.secp256k1`
 
   test(prefix, async (t) => {

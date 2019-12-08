@@ -10,7 +10,7 @@ const fs = require('fs')
 const lodash = require('lodash')
 const yargs = require('yargs')
 
-function getArgs() {
+function getArgs () {
   return yargs
     .usage('Usage: $0 <command> [options]')
     .wrap(yargs.terminalWidth())
@@ -30,7 +30,7 @@ function getArgs() {
     .alias('help', 'h').argv
 }
 
-function parseContent(content) {
+function parseContent (content) {
   const WASM_PAGE_SIZE = content.match(/var WASM_PAGE_SIZE = (\d+);/)
   const INITIAL_TOTAL_MEMORY = content.match(
     /var INITIAL_TOTAL_MEMORY = (\d+);/
