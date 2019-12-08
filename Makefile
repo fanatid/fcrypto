@@ -133,7 +133,7 @@ prettier = ./node_modules/.bin/prettier-standard
 
 format_cpp_files = src/addon/* src/fcrypto/*
 # format_js_files = benchmarks/*.js lib/*.js lib/**/*.js test/*.js util/*.js
-format_js_files = benchmarks/*.js lib/*.js lib/**/*.js test/*.js util/*.js package.json
+format_js_files = benchmarks/*.js lib/*.js lib/**/*.js test/*.js util/*.js
 lint_dir = build/lint
 
 format: format-cpp format-js
@@ -142,7 +142,8 @@ format-cpp:
 	clang-format -i -verbose $(format_cpp_files)
 
 format-js:
-	$(prettier) --lint $(format_js_files)
+	$(eslint) --fix $(format_js_files)
+	$(prettier) --lint $(format_js_files) package.json
 
 
 lint: lint-cpp lint-js
@@ -155,10 +156,11 @@ lint-cpp:
 
 # super hucky, wish https://github.com/prettier/prettier/issues/4612
 lint-js:
+	$(eslint) $(format_js_files)
 	mkdir -p $(lint_dir)/js/src $(lint_dir)/js/dst
 	rsync -a --delete --exclude=build --exclude=node_modules . $(lint_dir)/js/src
 	rsync -a --delete --exclude=build --exclude=node_modules . $(lint_dir)/js/dst
-	cd $(lint_dir)/js/dst && ../../../../$(prettier) $(format_js_files)
+	cd $(lint_dir)/js/dst && ../../../../$(prettier) $(format_js_files) package.json
 	git diff --no-index --exit-code $(lint_dir)/js/src $(lint_dir)/js/dst
 
 
