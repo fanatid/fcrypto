@@ -82,6 +82,7 @@ build-wasm-fcrypto:
 				_free, \
 				_fcrypto_secp256k1_context_create, \
 				_fcrypto_secp256k1_context_destroy, \
+				_fcrypto_secp256k1_context_randomize, \
 				_fcrypto_secp256k1_seckey_verify, \
 				_fcrypto_secp256k1_seckey_negate, \
 				_fcrypto_secp256k1_seckey_tweak_add, \

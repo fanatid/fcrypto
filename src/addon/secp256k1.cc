@@ -8,6 +8,8 @@ Napi::Value Secp256k1Addon::Init(Napi::Env env) {
   Napi::Function func = DefineClass(
       env, "Secp256k1Addon",
       {
+          InstanceMethod("randomize", &Secp256k1Addon::Randomize),
+
           InstanceMethod("privateKeyVerify", &Secp256k1Addon::PrivateKeyVerify),
           InstanceMethod("privateKeyNegate", &Secp256k1Addon::PrivateKeyNegate),
           InstanceMethod("privateKeyTweakAdd",
@@ -56,6 +58,16 @@ Secp256k1Addon::~Secp256k1Addon() {
 
   // size_t size = fcrypto_secp256k1_context_size();
   // Napi::MemoryManagement::AdjustExternalMemory(info.Env(), -size);
+}
+
+Napi::Value Secp256k1Addon::Randomize(const Napi::CallbackInfo& info) {
+  const unsigned char* seed32 = NULL;
+  if (!info[0].IsNull()) {
+    seed32 = info[0].As<Napi::Buffer<const unsigned char>>().Data();
+  }
+
+  RET(fcrypto_secp256k1_context_randomize(
+      const_cast<secp256k1_context*>(this->ctx_), seed32));
 }
 
 // PrivateKey

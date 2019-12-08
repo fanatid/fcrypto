@@ -1,4 +1,5 @@
 const test = require('tape')
+const { randomBytes } = require('crypto')
 const fcrypto = require('../')
 
 function createTests (type) {
@@ -30,15 +31,33 @@ function createTests (type) {
       t.end()
     })
 
+    t.test(`${prefix}.randomize with invalid seed`, (t) => {
+      t.throws(() => {
+        secp256k1.randomize(42)
+      }, new RegExp('^Error: Expected "seed" to be Uint8Array or null$'))
+
+      t.throws(() => {
+        secp256k1.randomize(new Uint8Array(31))
+      }, new RegExp('^Error: Expected "seed" to be Uint8Array with length 32$'))
+
+      t.end()
+    })
+
+    t.test(`${prefix}.randomize`, (t) => {
+      t.doesNotThrow(() => secp256k1.randomize(randomBytes(32)))
+      t.doesNotThrow(() => secp256k1.randomize(null))
+      t.end()
+    })
+
     // privateKeyVerify
     t.test(`${prefix}.privateKeyVerify with invalid private key`, (t) => {
       t.throws(() => {
         secp256k1.privateKeyVerify(null)
-      }, new RegExp('^Error: Expected private key to be Uint8Array$'))
+      }, new RegExp('^Error: Expected "private key" to be Uint8Array$'))
 
       t.throws(() => {
         secp256k1.privateKeyVerify(new Uint8Array(31))
-      }, new RegExp('^Error: Expected private key to be Uint8Array with length 32$'))
+      }, new RegExp('^Error: Expected "private key" to be Uint8Array with length 32$'))
 
       t.end()
     })

@@ -10,6 +10,13 @@ extern "C" {
 secp256k1_context* fcrypto_secp256k1_context_create();
 void fcrypto_secp256k1_context_destroy(secp256k1_context* ctx);
 
+/** Updates the context randomization to protect against side-channel leakage.
+ *  Returns: 0: randomization successfully updated or nothing to randomize
+ *           1: error
+ */
+int fcrypto_secp256k1_context_randomize(secp256k1_context* ctx,
+                                        const unsigned char* seed32);
+
 /** Verify an ECDSA secret key.
  *  Returns: 0: secret key is valid
  *           1: secret key is invalid

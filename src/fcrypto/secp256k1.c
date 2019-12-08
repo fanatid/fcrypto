@@ -47,6 +47,11 @@ void fcrypto_secp256k1_context_destroy(secp256k1_context* ctx) {
   return secp256k1_context_destroy(ctx);
 };
 
+int fcrypto_secp256k1_context_randomize(secp256k1_context* ctx,
+                                        const unsigned char* seed32) {
+  RETURN_INVERTED(secp256k1_context_randomize(ctx, seed32));
+}
+
 // PrivateKey
 int fcrypto_secp256k1_seckey_verify(const secp256k1_context* ctx,
                                     const unsigned char* seckey) {
