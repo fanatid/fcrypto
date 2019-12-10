@@ -45,7 +45,7 @@
         'USE_SCALAR_INV_BUILTIN=1',
       ],
       'conditions': [
-        ['target_arch=="x64"', {
+        ['target_arch=="x64" and OS!="win"', {
           'defines': [
             'HAVE___INT128=1',
             'USE_ASM_X86_64=1',
@@ -81,7 +81,9 @@
         'src/addon/secp256k1.cc',
       ],
       'include_dirs': [
-        '<!@(node -p \'require("node-addon-api").include\')',
+        # On Windows: Cannot open include file: 'napi.h': No such file or directory
+        # '<!@(node -p \'require("node-addon-api").include\')',
+        'node_modules/node-addon-api',
         'src',
       ],
       'cflags!': [

@@ -4,10 +4,10 @@ node_modules/
 lib/wasm/wasm-glue.js
 lib/wasm/wasm-bin-browser.js
 
+fcrypto.wasm
 fcrypto-darwin-x64.node
 fcrypto-linux-x64.node
 fcrypto-win32-x64.node
-fcrypto.wasm
 
 npm-debug.log
 package-lock.json

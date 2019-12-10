@@ -21,17 +21,21 @@ build-addon-copy:
 	util/build-addon-copy.js
 
 
+build_wasm_emscripten_version = 1.39.3
 build_wasm_dir = build/wasm
 build_wasm_dir_js = lib/wasm
 build_wasm_opts = -O3
 
 build-wasm: build-wasm-docker-image build-wasm-libs build-wasm-fcrypto build-wasm-copy build-wasm-jsglue
+build-wasm-ci: build-wasm-docker-image-ci build-wasm-libs build-wasm-fcrypto build-wasm-copy build-wasm-jsglue
 
 build-wasm-docker-image:
-	@if [ "`id -u`" -ne 1000 ] || [ "`id -g`" -ne 1000 ]; then \
-		echo 'User id and group id, both should be 1000'; exit 1; \
-	else true; fi
-	docker build -t fcrypto-build-wasm -f util/wasm.dockerfile .
+	docker build -t fcrypto-build-wasm --build-arg EMSCRIPTEN_VERSION=$(build_wasm_emscripten_version) -f util/wasm.dockerfile .
+
+# GitHub Actions do not have cache for images. We do not need `wat` file for release, so original image is fine for us here.
+build-wasm-docker-image-ci:
+	docker pull trzeci/emscripten:$(build_wasm_emscripten_version)
+	docker tag trzeci/emscripten:$(build_wasm_emscripten_version) fcrypto-build-wasm
 
 build-wasm-libs: build-wasm-secp256k1
 
@@ -39,7 +43,7 @@ build-wasm-secp256k1:
 	mkdir -p $(build_wasm_dir)/secp256k1
 	rsync -a --delete src/secp256k1/ $(build_wasm_dir)/secp256k1/
 	# Definitions from binding.gyp (x32)
-	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
+	docker run --rm -v `pwd`:`pwd` -w `pwd` -u `id -u`:`id -g` fcrypto-build-wasm \
 		emcc \
 			-o $(build_wasm_dir)/secp256k1.o \
 			$(build_wasm_opts) \
@@ -61,7 +65,7 @@ build-wasm-secp256k1:
 			$(build_wasm_dir)/secp256k1/src/secp256k1.c
 
 build-wasm-fcrypto:
-	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
+	docker run --rm -v `pwd`:`pwd` -w `pwd` -u `id -u`:`id -g` fcrypto-build-wasm \
 		emcc \
 			-o $(build_wasm_dir)/fcrypto.js \
 			$(build_wasm_opts) \
@@ -112,7 +116,7 @@ build-wasm-jsglue:
 		-o $(build_wasm_dir_js)/wasm-glue.js
 
 build-wasm-wat:
-	docker run --rm -v `pwd`:`pwd` -w `pwd` -u 1000:1000 fcrypto-build-wasm \
+	docker run --rm -v `pwd`:`pwd` -w `pwd` -u `id -u`:`id -g` fcrypto-build-wasm \
 		wasm2wat \
 			-o $(build_wasm_dir)/fcrypto.wat \
 			$(build_wasm_dir)/fcrypto.wasm
@@ -132,7 +136,6 @@ eslint = ./node_modules/.bin/eslint
 prettier = ./node_modules/.bin/prettier-standard
 
 format_cpp_files = src/addon/* src/fcrypto/*
-# format_js_files = benchmarks/*.js lib/*.js lib/**/*.js test/*.js util/*.js
 format_js_files = benchmarks/*.js lib/*.js lib/**/*.js test/*.js util/*.js
 lint_dir = build/lint
 
@@ -154,7 +157,13 @@ lint-cpp:
 	cd $(lint_dir)/cpp && clang-format -i -verbose $(format_cpp_files)
 	git diff --no-index --exit-code src $(lint_dir)/cpp/src
 
-# super hucky, wish https://github.com/prettier/prettier/issues/4612
+# `-verbose` not exists in clang-format@3.8
+# See https://github.com/actions/virtual-environments/issues/46
+lint-cpp-ci:
+	clang-format -i $(format_cpp_files)
+	git diff --exit-code --color=always
+
+# Super hucky, wish https://github.com/prettier/prettier/issues/4612
 lint-js:
 	$(eslint) $(format_js_files)
 	mkdir -p $(lint_dir)/js/src $(lint_dir)/js/dst
@@ -163,6 +172,11 @@ lint-js:
 	cd $(lint_dir)/js/dst && ../../../../$(prettier) $(format_js_files) package.json
 	git diff --no-index --exit-code $(lint_dir)/js/src $(lint_dir)/js/dst
 
+# No extra steps for `rsync`
+lint-js-ci:
+	$(eslint) --fix $(format_js_files)
+	$(prettier) $(format_js_files) package.json
+	git diff --exit-code --color=always
 
 tape = ./node_modules/.bin/tape
 tap_reporter = ./node_modules/.bin/tap-dot

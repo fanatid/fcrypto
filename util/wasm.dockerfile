@@ -1,6 +1,6 @@
 # We need custom image for creating wat file on development.
 
-ARG EMSCRIPTEN_VERSION=1.39.3
+ARG EMSCRIPTEN_VERSION
 
 FROM trzeci/emscripten:${EMSCRIPTEN_VERSION}
 

@@ -1,5 +1,6 @@
 # fcrypto
 
+- [Installation](#installation)
 - [Loading process](#loading-process)
 - [API](#api)
 - [Examples](#examples)
@@ -32,6 +33,12 @@ Currently supported:
   - ECDSA (secp256r1, nist256p1)
   - EdDSA (ed25519)
   - BLAKE
+-->
+
+## Installation
+
+<!--
+  TODO: already built for x64, ignore-scripts for npm & yarn
 -->
 
 ## Loading process

@@ -1,6 +1,7 @@
 const test = require('tape')
 const { randomBytes } = require('crypto')
 const fcrypto = require('../')
+const { getAvailableTypes } = require('./util')
 
 function createTests (type) {
   const prefix = `${type}.secp256k1`
@@ -273,5 +274,4 @@ function createTests (type) {
   })
 }
 
-if (!process.browser) createTests('addon')
-createTests('wasm')
+for (const tp of getAvailableTypes()) createTests(tp)
