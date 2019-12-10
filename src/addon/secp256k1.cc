@@ -8,7 +8,7 @@ Napi::Value Secp256k1Addon::Init(Napi::Env env) {
   Napi::Function func = DefineClass(
       env, "Secp256k1Addon",
       {
-          InstanceMethod("randomize", &Secp256k1Addon::Randomize),
+          InstanceMethod("contextRandomize", &Secp256k1Addon::ContextRandomize),
 
           InstanceMethod("privateKeyVerify", &Secp256k1Addon::PrivateKeyVerify),
           InstanceMethod("privateKeyNegate", &Secp256k1Addon::PrivateKeyNegate),
@@ -60,7 +60,7 @@ void Secp256k1Addon::Finalize(Napi::Env env) {
   Napi::MemoryManagement::AdjustExternalMemory(env, -size);
 }
 
-Napi::Value Secp256k1Addon::Randomize(const Napi::CallbackInfo& info) {
+Napi::Value Secp256k1Addon::ContextRandomize(const Napi::CallbackInfo& info) {
   const unsigned char* seed32 = NULL;
   if (!info[0].IsNull()) {
     seed32 = info[0].As<Napi::Buffer<const unsigned char>>().Data();

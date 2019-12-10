@@ -164,11 +164,12 @@ lint-js:
 	git diff --no-index --exit-code $(lint_dir)/js/src $(lint_dir)/js/dst
 
 
-test_reporter = ./node_modules/.bin/tap-dot
+tape = ./node_modules/.bin/tape
+tap_reporter = ./node_modules/.bin/tap-dot
 test_files = test/*.js
 
 test:
-	node $(test_files) | $(test_reporter)
+	$(tape) $(test_files) | $(tap_reporter)
 
 test-tap:
-	node $(test_files)
+	$(tape) $(test_files)

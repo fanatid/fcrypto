@@ -1,8 +1,7 @@
 # fcrypto
 
+- [Loading process](#loading-process)
 - [API](#api)
-  - [Common conventions](#common-conventions)
-  - [List](#list)
 - [Examples](#examples)
 - [License](#license)
 
@@ -34,6 +33,14 @@ Currently supported:
   - EdDSA (ed25519)
   - BLAKE
 -->
+
+## Loading process
+
+If you use `fcrypo` directly on indirectly through dependencies, it's required wait loading first. Libraries should not be responsible for this. For example, in project entrypoint:
+
+```js
+require('fcrypto').load().then(startApp)
+```
 
 ## API
 

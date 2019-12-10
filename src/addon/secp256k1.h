@@ -15,7 +15,7 @@ class Secp256k1Addon : public Napi::ObjectWrap<Secp256k1Addon> {
   const secp256k1_context* ctx_;
   static Napi::FunctionReference constructor;
 
-  Napi::Value Randomize(const Napi::CallbackInfo& info);
+  Napi::Value ContextRandomize(const Napi::CallbackInfo& info);
 
   Napi::Value PrivateKeyVerify(const Napi::CallbackInfo& info);
   Napi::Value PrivateKeyNegate(const Napi::CallbackInfo& info);

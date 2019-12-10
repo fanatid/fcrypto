@@ -31,21 +31,21 @@ function createTests (type) {
       t.end()
     })
 
-    t.test(`${prefix}.randomize with invalid seed`, (t) => {
+    t.test(`${prefix}.contextRandomize with invalid seed`, (t) => {
       t.throws(() => {
-        secp256k1.randomize(42)
+        secp256k1.contextRandomize(42)
       }, new RegExp('^Error: Expected seed to be Uint8Array or null$'))
 
       t.throws(() => {
-        secp256k1.randomize(new Uint8Array(31))
+        secp256k1.contextRandomize(new Uint8Array(31))
       }, new RegExp('^Error: Expected seed to be Uint8Array with length 32$'))
 
       t.end()
     })
 
-    t.test(`${prefix}.randomize`, (t) => {
-      t.doesNotThrow(() => secp256k1.randomize(randomBytes(32)))
-      t.doesNotThrow(() => secp256k1.randomize(null))
+    t.test(`${prefix}.contextRandomize`, (t) => {
+      t.doesNotThrow(() => secp256k1.contextRandomize(randomBytes(32)))
+      t.doesNotThrow(() => secp256k1.contextRandomize(null))
       t.end()
     })
 
