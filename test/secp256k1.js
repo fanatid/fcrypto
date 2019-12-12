@@ -268,7 +268,6 @@ function createTests (type) {
     // ecdsaVerify
     // ecdsaRecover
     // ecdh
-    // ecdhUnsafe
 
     t.end()
   })

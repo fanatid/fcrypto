@@ -89,7 +89,6 @@ const newPrivateKey = fcrypto.secp256k1.privateKeyNegate(Buffer.from(privateKey)
 ##### .secp256k1.ecdsaVerify
 ##### .secp256k1.ecdsaRecover
 ##### .secp256k1.ecdh
-##### .secp256k1.ecdhUnsafe
 -->
 
 ##### .ready: Promise&lt;object&gt;

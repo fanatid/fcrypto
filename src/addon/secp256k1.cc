@@ -36,7 +36,6 @@ Napi::Value Secp256k1Addon::Init(Napi::Env env) {
           InstanceMethod("ecdsaRecover", &Secp256k1Addon::ECDSARecover),
 
           InstanceMethod("ecdh", &Secp256k1Addon::ECDH),
-          InstanceMethod("ecdhUnsafe", &Secp256k1Addon::ECDHUnsafe),
       });
 
   constructor = Napi::Persistent(func);
@@ -173,9 +172,5 @@ Napi::Value Secp256k1Addon::ECDSARecover(const Napi::CallbackInfo& info) {
 
 // ECDH
 Napi::Value Secp256k1Addon::ECDH(const Napi::CallbackInfo& info) {
-  RET(0);
-}
-
-Napi::Value Secp256k1Addon::ECDHUnsafe(const Napi::CallbackInfo& info) {
   RET(0);
 }
