@@ -33,7 +33,6 @@ void secp256k1_default_error_callback_fn(const char* str, void* data) {
 // TODO: remove everything except retcode?
 #define PUBKEY_SERIALIZE(retcode)                                              \
   do {                                                                         \
-    size_t outputlen = compressed == 0 ? 65 : 33;                              \
     int flags =                                                                \
         outputlen == 33 ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED; \
     RETURN_IF_ZERO(secp256k1_ec_pubkey_serialize(ctx, output, &outputlen,      \
@@ -89,7 +88,7 @@ int fcrypto_secp256k1_seckey_tweak_mul(const secp256k1_context* ctx,
 int fcrypto_secp256k1_pubkey_create(const secp256k1_context* ctx,
                                     unsigned char* output,
                                     const unsigned char* seckey,
-                                    unsigned int compressed) {
+                                    size_t outputlen) {
   secp256k1_pubkey pubkey;
   RETURN_IF_ZERO(secp256k1_ec_pubkey_create(ctx, &pubkey, seckey), 1);
   PUBKEY_SERIALIZE(2);
@@ -100,7 +99,7 @@ int fcrypto_secp256k1_pubkey_convert(const secp256k1_context* ctx,
                                      unsigned char* output,
                                      const unsigned char* input,
                                      size_t inputlen,
-                                     unsigned int compressed) {
+                                     size_t outputlen) {
   secp256k1_pubkey pubkey;
   RETURN_IF_ZERO(secp256k1_ec_pubkey_parse(ctx, &pubkey, input, inputlen), 1);
   PUBKEY_SERIALIZE(2);
@@ -111,7 +110,7 @@ int fcrypto_secp256k1_pubkey_negate(const secp256k1_context* ctx,
                                     unsigned char* output,
                                     const unsigned char* input,
                                     size_t inputlen,
-                                    unsigned int compressed) {
+                                    size_t outputlen) {
   secp256k1_pubkey pubkey;
   RETURN_IF_ZERO(secp256k1_ec_pubkey_parse(ctx, &pubkey, input, inputlen), 1);
   RETURN_IF_ZERO(secp256k1_ec_pubkey_negate(ctx, &pubkey), 2);
@@ -119,13 +118,13 @@ int fcrypto_secp256k1_pubkey_negate(const secp256k1_context* ctx,
   return 0;
 }
 
-// We can not use unique_ptr in C, so no macros here ¯\_(ツ)_/¯
+// We can not use unique_ptr in C, so no macroses here ¯\_(ツ)_/¯
 int fcrypto_secp256k1_pubkey_combine(const secp256k1_context* ctx,
                                      unsigned char* output,
                                      const unsigned char* const* inputs,
                                      const size_t* inputslen,
                                      size_t n,
-                                     unsigned int compressed) {
+                                     size_t outputlen) {
   int ret = 0;
 
   secp256k1_pubkey* pubkeys = calloc(n, sizeof(secp256k1_pubkey));
@@ -147,7 +146,6 @@ int fcrypto_secp256k1_pubkey_combine(const secp256k1_context* ctx,
     goto cleanup;
   }
 
-  size_t outputlen = compressed == 0 ? 65 : 33;
   int flags =
       outputlen == 33 ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED;
   if (secp256k1_ec_pubkey_serialize(ctx, output, &outputlen, &pubkey, flags) ==
@@ -168,7 +166,7 @@ int fcrypto_secp256k1_pubkey_tweak_add(const secp256k1_context* ctx,
                                        const unsigned char* input,
                                        size_t inputlen,
                                        const unsigned char* tweak,
-                                       unsigned int compressed) {
+                                       size_t outputlen) {
   secp256k1_pubkey pubkey;
   RETURN_IF_ZERO(secp256k1_ec_pubkey_parse(ctx, &pubkey, input, inputlen), 1);
   RETURN_IF_ZERO(secp256k1_ec_pubkey_tweak_add(ctx, &pubkey, tweak), 2);
@@ -181,7 +179,7 @@ int fcrypto_secp256k1_pubkey_tweak_mul(const secp256k1_context* ctx,
                                        const unsigned char* input,
                                        size_t inputlen,
                                        const unsigned char* tweak,
-                                       unsigned int compressed) {
+                                       size_t outputlen) {
   secp256k1_pubkey pubkey;
   RETURN_IF_ZERO(secp256k1_ec_pubkey_parse(ctx, &pubkey, input, inputlen), 1);
   RETURN_IF_ZERO(secp256k1_ec_pubkey_tweak_mul(ctx, &pubkey, tweak), 2);
@@ -263,7 +261,7 @@ int fcrypto_secp256k1_ecdsa_recover(const secp256k1_context* ctx,
                                     const unsigned char* sigraw,
                                     int recid,
                                     const unsigned char* msg32,
-                                    unsigned int compressed) {
+                                    size_t outputlen) {
   secp256k1_ecdsa_recoverable_signature sig;
   RETURN_IF_ZERO(secp256k1_ecdsa_recoverable_signature_parse_compact(
                      ctx, &sig, sigraw, recid),

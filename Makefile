@@ -93,8 +93,17 @@ build-wasm-fcrypto:
 				_fcrypto_secp256k1_seckey_tweak_mul, \
 				_fcrypto_secp256k1_pubkey_create, \
 				_fcrypto_secp256k1_pubkey_convert, \
+				_fcrypto_secp256k1_pubkey_negate, \
+				_fcrypto_secp256k1_pubkey_combine, \
+				_fcrypto_secp256k1_pubkey_tweak_add, \
+				_fcrypto_secp256k1_pubkey_tweak_mul, \
+				_fcrypto_secp256k1_signature_normalize, \
+				_fcrypto_secp256k1_signature_export, \
+				_fcrypto_secp256k1_signature_import, \
 				_fcrypto_secp256k1_ecdsa_sign, \
-				_fcrypto_secp256k1_ecdsa_verify \
+				_fcrypto_secp256k1_ecdsa_verify, \
+				_fcrypto_secp256k1_ecdsa_recover, \
+				_fcrypto_secp256k1_ecdh \
 			]" \
 			-Isrc \
 			-Wall \

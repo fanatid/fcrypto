@@ -98,31 +98,65 @@ Napi::Value Secp256k1Addon::PrivateKeyTweakMul(const Napi::CallbackInfo& info) {
 
 // PublicKey
 Napi::Value Secp256k1Addon::PublicKeyCreate(const Napi::CallbackInfo& info) {
-  auto output = info[0].As<Napi::Buffer<unsigned char>>().Data();
+  auto output = info[0].As<Napi::Buffer<unsigned char>>();
   auto seckey = info[1].As<Napi::Buffer<const unsigned char>>().Data();
-  auto outputlen = info[2].As<Napi::Number>().Int32Value();
 
-  RET(fcrypto_secp256k1_pubkey_create(this->ctx_, output, seckey, outputlen));
+  RET(fcrypto_secp256k1_pubkey_create(this->ctx_, output.Data(), seckey,
+                                      output.Length()));
 }
 
 Napi::Value Secp256k1Addon::PublicKeyConvert(const Napi::CallbackInfo& info) {
-  RET(0);
+  auto output = info[0].As<Napi::Buffer<unsigned char>>();
+  auto pubkey = info[1].As<Napi::Buffer<const unsigned char>>();
+
+  RET(fcrypto_secp256k1_pubkey_convert(this->ctx_, output.Data(), pubkey.Data(),
+                                       pubkey.Length(), output.Length()));
 }
 
 Napi::Value Secp256k1Addon::PublicKeyNegate(const Napi::CallbackInfo& info) {
-  RET(0);
+  auto output = info[0].As<Napi::Buffer<unsigned char>>();
+  auto pubkey = info[1].As<Napi::Buffer<const unsigned char>>();
+
+  RET(fcrypto_secp256k1_pubkey_negate(this->ctx_, output.Data(), pubkey.Data(),
+                                      pubkey.Length(), output.Length()));
 }
 
 Napi::Value Secp256k1Addon::PublicKeyCombine(const Napi::CallbackInfo& info) {
-  RET(0);
+  auto output = info[0].As<Napi::Buffer<unsigned char>>();
+  auto pubkeys = info[1].As<Napi::Array>();
+
+  std::unique_ptr<const unsigned char*[]> inputs(
+      new const unsigned char*[pubkeys.Length()]);
+  std::unique_ptr<size_t[]> inputslen(new size_t[pubkeys.Length()]);
+  for (size_t i = 0; i < pubkeys.Length(); ++i) {
+    auto pubkey = pubkeys.Get(i).As<Napi::Buffer<const unsigned char>>();
+    inputs[i] = pubkey.Data();
+    inputslen[i] = pubkey.Length();
+  }
+
+  RET(fcrypto_secp256k1_pubkey_combine(this->ctx_, output.Data(), inputs.get(),
+                                       inputslen.get(), pubkeys.Length(),
+                                       output.Length()));
 }
 
 Napi::Value Secp256k1Addon::PublicKeyTweakAdd(const Napi::CallbackInfo& info) {
-  RET(0);
+  auto output = info[0].As<Napi::Buffer<unsigned char>>();
+  auto pubkey = info[1].As<Napi::Buffer<const unsigned char>>();
+  auto tweak = info[2].As<Napi::Buffer<const unsigned char>>().Data();
+
+  RET(fcrypto_secp256k1_pubkey_tweak_add(this->ctx_, output.Data(),
+                                         pubkey.Data(), pubkey.Length(), tweak,
+                                         output.Length()));
 }
 
 Napi::Value Secp256k1Addon::PublicKeyTweakMul(const Napi::CallbackInfo& info) {
-  RET(0);
+  auto output = info[0].As<Napi::Buffer<unsigned char>>();
+  auto pubkey = info[1].As<Napi::Buffer<const unsigned char>>();
+  auto tweak = info[2].As<Napi::Buffer<const unsigned char>>().Data();
+
+  RET(fcrypto_secp256k1_pubkey_tweak_mul(this->ctx_, output.Data(),
+                                         pubkey.Data(), pubkey.Length(), tweak,
+                                         output.Length()));
 }
 
 // Signature
