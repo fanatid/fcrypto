@@ -36,7 +36,7 @@ function createTests (type) {
       }, /^Error: Expected seed to be Uint8Array or null$/)
 
       t.throws(() => {
-        secp256k1.contextRandomize(new Uint8Array(31))
+        secp256k1.contextRandomize(new Uint8Array(42))
       }, /^Error: Expected seed to be Uint8Array with length 32$/)
 
       t.end()
@@ -55,7 +55,7 @@ function createTests (type) {
       }, /^Error: Expected private key to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.privateKeyVerify(new Uint8Array(31))
+        secp256k1.privateKeyVerify(new Uint8Array(42))
       }, /^Error: Expected private key to be Uint8Array with length 32$/)
 
       t.end()
@@ -90,7 +90,7 @@ function createTests (type) {
       }, /^Error: Expected private key to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.privateKeyNegate(new Uint8Array(31))
+        secp256k1.privateKeyNegate(new Uint8Array(42))
       }, /^Error: Expected private key to be Uint8Array with length 32$/)
 
       t.end()
@@ -127,7 +127,7 @@ function createTests (type) {
       }, /^Error: Expected private key to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.privateKeyTweakAdd(new Uint8Array(31))
+        secp256k1.privateKeyTweakAdd(new Uint8Array(42))
       }, /^Error: Expected private key to be Uint8Array with length 32$/)
 
       t.end()
@@ -141,7 +141,7 @@ function createTests (type) {
       }, /^Error: Expected tweak to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.privateKeyTweakAdd(pk, new Uint8Array(31))
+        secp256k1.privateKeyTweakAdd(pk, new Uint8Array(42))
       }, /^Error: Expected tweak to be Uint8Array with length 32$/)
 
       t.end()
@@ -190,7 +190,7 @@ function createTests (type) {
       }, /^Error: Expected private key to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.privateKeyTweakMul(new Uint8Array(31))
+        secp256k1.privateKeyTweakMul(new Uint8Array(42))
       }, /^Error: Expected private key to be Uint8Array with length 32$/)
 
       t.end()
@@ -204,7 +204,7 @@ function createTests (type) {
       }, /^Error: Expected tweak to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.privateKeyTweakMul(pk, new Uint8Array(31))
+        secp256k1.privateKeyTweakMul(pk, new Uint8Array(42))
       }, /^Error: Expected tweak to be Uint8Array with length 32$/)
 
       t.end()
@@ -253,7 +253,7 @@ function createTests (type) {
       }, /^Error: Expected private key to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyCreate(new Uint8Array(31))
+        secp256k1.publicKeyCreate(new Uint8Array(42))
       }, /^Error: Expected private key to be Uint8Array with length 32$/)
 
       t.end()
@@ -267,11 +267,11 @@ function createTests (type) {
       }, /^Error: Expected output to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyCreate(seckey, true, new Uint8Array(31))
+        secp256k1.publicKeyCreate(seckey, true, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 33$/)
 
       t.throws(() => {
-        secp256k1.publicKeyCreate(seckey, false, new Uint8Array(31))
+        secp256k1.publicKeyCreate(seckey, false, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 65$/)
 
       t.end()
@@ -325,7 +325,7 @@ function createTests (type) {
       }, /^Error: Expected public key to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyConvert(new Uint8Array(31))
+        secp256k1.publicKeyConvert(new Uint8Array(42))
       }, /^Error: Expected public key to be Uint8Array with length \[33, 65]$/)
 
       t.end()
@@ -339,11 +339,11 @@ function createTests (type) {
       }, /^Error: Expected output to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyConvert(pubkey, true, new Uint8Array(31))
+        secp256k1.publicKeyConvert(pubkey, true, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 33$/)
 
       t.throws(() => {
-        secp256k1.publicKeyConvert(pubkey, false, new Uint8Array(31))
+        secp256k1.publicKeyConvert(pubkey, false, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 65$/)
 
       t.end()
@@ -397,7 +397,7 @@ function createTests (type) {
       }, /^Error: Expected public key to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyNegate(new Uint8Array(31))
+        secp256k1.publicKeyNegate(new Uint8Array(42))
       }, /^Error: Expected public key to be Uint8Array with length \[33, 65]$/)
 
       t.end()
@@ -411,11 +411,11 @@ function createTests (type) {
       }, /^Error: Expected output to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyNegate(pubkey, true, new Uint8Array(31))
+        secp256k1.publicKeyNegate(pubkey, true, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 33$/)
 
       t.throws(() => {
-        secp256k1.publicKeyNegate(pubkey, false, new Uint8Array(31))
+        secp256k1.publicKeyNegate(pubkey, false, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 65$/)
 
       t.end()
@@ -473,7 +473,7 @@ function createTests (type) {
       }, /^Error: Expected public key to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyCombine([new Uint8Array(31)])
+        secp256k1.publicKeyCombine([new Uint8Array(42)])
       }, /^Error: Expected public key to be Uint8Array with length \[33, 65]$/)
 
       t.end()
@@ -487,11 +487,11 @@ function createTests (type) {
       }, /^Error: Expected output to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyCombine([pubkey], true, new Uint8Array(31))
+        secp256k1.publicKeyCombine([pubkey], true, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 33$/)
 
       t.throws(() => {
-        secp256k1.publicKeyCombine([pubkey], false, new Uint8Array(31))
+        secp256k1.publicKeyCombine([pubkey], false, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 65$/)
 
       t.end()
@@ -547,7 +547,7 @@ function createTests (type) {
       }, /^Error: Expected public key to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyTweakAdd(new Uint8Array(31))
+        secp256k1.publicKeyTweakAdd(new Uint8Array(42))
       }, /^Error: Expected public key to be Uint8Array with length \[33, 65]$/)
 
       t.end()
@@ -559,7 +559,7 @@ function createTests (type) {
       }, /^Error: Expected tweak to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyTweakAdd(new Uint8Array(33), new Uint8Array(31))
+        secp256k1.publicKeyTweakAdd(new Uint8Array(33), new Uint8Array(42))
       }, /^Error: Expected tweak to be Uint8Array with length 32$/)
 
       t.end()
@@ -574,11 +574,11 @@ function createTests (type) {
       }, /^Error: Expected output to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyTweakAdd(pubkey, tweak, true, new Uint8Array(31))
+        secp256k1.publicKeyTweakAdd(pubkey, tweak, true, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 33$/)
 
       t.throws(() => {
-        secp256k1.publicKeyTweakAdd(pubkey, tweak, false, new Uint8Array(31))
+        secp256k1.publicKeyTweakAdd(pubkey, tweak, false, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 65$/)
 
       t.end()
@@ -637,7 +637,7 @@ function createTests (type) {
       }, /^Error: Expected public key to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyTweakMul(new Uint8Array(31))
+        secp256k1.publicKeyTweakMul(new Uint8Array(42))
       }, /^Error: Expected public key to be Uint8Array with length \[33, 65]$/)
 
       t.end()
@@ -649,7 +649,7 @@ function createTests (type) {
       }, /^Error: Expected tweak to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyTweakMul(new Uint8Array(33), new Uint8Array(31))
+        secp256k1.publicKeyTweakMul(new Uint8Array(33), new Uint8Array(42))
       }, /^Error: Expected tweak to be Uint8Array with length 32$/)
 
       t.end()
@@ -664,11 +664,11 @@ function createTests (type) {
       }, /^Error: Expected output to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.publicKeyTweakMul(pubkey, tweak, true, new Uint8Array(31))
+        secp256k1.publicKeyTweakMul(pubkey, tweak, true, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 33$/)
 
       t.throws(() => {
-        secp256k1.publicKeyTweakMul(pubkey, tweak, false, new Uint8Array(31))
+        secp256k1.publicKeyTweakMul(pubkey, tweak, false, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 65$/)
 
       t.end()
@@ -727,7 +727,7 @@ function createTests (type) {
       }, /^Error: Expected signature to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.signatureNormalize(new Uint8Array(63))
+        secp256k1.signatureNormalize(new Uint8Array(42))
       }, /^Error: Expected signature to be Uint8Array with length 64$/)
 
       t.end()
@@ -764,7 +764,7 @@ function createTests (type) {
       }, /^Error: Expected signature to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.signatureExport(new Uint8Array(63))
+        secp256k1.signatureExport(new Uint8Array(42))
       }, /^Error: Expected signature to be Uint8Array with length 64$/)
 
       t.end()
@@ -824,10 +824,6 @@ function createTests (type) {
         secp256k1.signatureImport(null)
       }, /^Error: Expected signature to be Uint8Array$/)
 
-      // t.doesNotThrow(() => {
-      //   secp256k1.signatureImport(new Uint8Array(63))
-      // })
-
       t.end()
     })
 
@@ -839,7 +835,7 @@ function createTests (type) {
       }, /^Error: Expected output to be Uint8Array$/)
 
       t.throws(() => {
-        secp256k1.signatureImport(sig, new Uint8Array(63))
+        secp256k1.signatureImport(sig, new Uint8Array(42))
       }, /^Error: Expected output to be Uint8Array with length 64$/)
 
       t.end()
@@ -883,9 +879,355 @@ function createTests (type) {
     })
 
     // ecdsaSign
+    t.test(`${prefix}.ecdsaSign with invalid message`, (t) => {
+      t.throws(() => {
+        secp256k1.ecdsaSign(null)
+      }, /^Error: Expected message to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaSign(new Uint8Array(42))
+      }, /^Error: Expected message to be Uint8Array with length 32$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaSign with invalid private key`, (t) => {
+      t.throws(() => {
+        secp256k1.ecdsaSign(new Uint8Array(32), null)
+      }, /^Error: Expected private key to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaSign(new Uint8Array(32), new Uint8Array(42))
+      }, /^Error: Expected private key to be Uint8Array with length 32$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaSign with invalid output`, (t) => {
+      const msg32 = new Uint8Array(32)
+      const seckey = new Uint8Array(32)
+
+      t.throws(() => {
+        secp256k1.ecdsaSign(msg32, seckey, null)
+      }, /^Error: Expected output to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaSign(msg32, seckey, new Uint8Array(42))
+      }, /^Error: Expected output to be Uint8Array with length 64$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaSign with output as function`, (t) => {
+      const seckey = Buffer.from(
+        '0000000000000000000000000000000000000000000000000000000000000001',
+        'hex'
+      )
+
+      t.plan(1)
+
+      secp256k1.ecdsaSign(new Uint8Array(32), seckey, (len) => {
+        t.same(len, 64)
+        return new Uint8Array(64)
+      })
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaSign fixtures`, (t) => {
+      const fixtures = [
+        {
+          msg32:
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          seckey:
+            '0000000000000000000000000000000000000000000000000000000000000001',
+          sig:
+            'a0b37f8fba683cc68f6574cd43b39f0343a50008bf6ccea9d13231d9e7e2e1e411edc8d307254296264aebfc3dc76cd8b668373a072fd64665b50000e9fcce52',
+          recid: 1,
+        },
+      ]
+
+      for (let { msg32, seckey, sig, recid } of fixtures) {
+        msg32 = Buffer.from(msg32, 'hex')
+        seckey = Buffer.from(seckey, 'hex')
+        const obj = secp256k1.ecdsaSign(msg32, seckey, Buffer.alloc)
+        t.same(obj.signature.toString('hex'), sig)
+        t.same(obj.recid, recid)
+      }
+
+      t.end()
+    })
+
     // ecdsaVerify
+    t.test(`${prefix}.ecdsaVerify with invalid signature`, (t) => {
+      t.throws(() => {
+        secp256k1.ecdsaVerify(null)
+      }, /^Error: Expected signature to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaVerify(new Uint8Array(42))
+      }, /^Error: Expected signature to be Uint8Array with length 64$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaVerify with invalid message`, (t) => {
+      t.throws(() => {
+        secp256k1.ecdsaVerify(new Uint8Array(64), null)
+      }, /^Error: Expected message to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaVerify(new Uint8Array(64), new Uint8Array(42))
+      }, /^Error: Expected message to be Uint8Array with length 32$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaVerify with invalid public key`, (t) => {
+      const sig = new Uint8Array(64)
+      const msg32 = new Uint8Array(32)
+
+      t.throws(() => {
+        secp256k1.ecdsaVerify(sig, msg32, null)
+      }, /^Error: Expected public key to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaVerify(sig, msg32, new Uint8Array(42))
+      }, /^Error: Expected public key to be Uint8Array with length \[33, 65]$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaVerify with fixtures`, (t) => {
+      const fixtures = [
+        {
+          sig:
+            'a0b37f8fba683cc68f6574cd43b39f0343a50008bf6ccea9d13231d9e7e2e1e411edc8d307254296264aebfc3dc76cd8b668373a072fd64665b50000e9fcce52',
+          msg32:
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          pubkey:
+            '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+          result: true,
+        },
+        {
+          sig:
+            'a0b37f8fba683cc68f6574cd43b39f0343a50008bf6ccea9d13231d9e7e2e1e411edc8d307254296264aebfc3dc76cd8b668373a072fd64665b50000e9fcce52',
+          msg32:
+            '0000000000000000000000000000000000000000000000000000000000000001',
+          pubkey:
+            '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+          result: false,
+        },
+      ]
+
+      for (let { sig, msg32, pubkey, result } of fixtures) {
+        sig = Buffer.from(sig, 'hex')
+        msg32 = Buffer.from(msg32, 'hex')
+        pubkey = Buffer.from(pubkey, 'hex')
+        const r = secp256k1.ecdsaVerify(sig, msg32, pubkey)
+        t.same(r, result)
+      }
+
+      t.end()
+    })
+
     // ecdsaRecover
+    t.test(`${prefix}.ecdsaRecover with invalid signature`, (t) => {
+      t.throws(() => {
+        secp256k1.ecdsaRecover(null)
+      }, /^Error: Expected signature to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaRecover(new Uint8Array(42))
+      }, /^Error: Expected signature to be Uint8Array with length 64$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaRecover with invalid recovery id`, (t) => {
+      t.throws(() => {
+        secp256k1.ecdsaRecover(new Uint8Array(64), null)
+      }, /^Error: Expected recovery id to be a Number within interval \[0, 3]$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaRecover(new Uint8Array(64), 5)
+      }, /^Error: Expected recovery id to be a Number within interval \[0, 3]$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaRecover with invalid message`, (t) => {
+      t.throws(() => {
+        secp256k1.ecdsaRecover(new Uint8Array(64), 0, null)
+      }, /^Error: Expected message to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaRecover(new Uint8Array(64), 0, new Uint8Array(42))
+      }, /^Error: Expected message to be Uint8Array with length 32$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaRecover with invalid output`, (t) => {
+      const sig = new Uint8Array(64)
+      const msg32 = new Uint8Array(32)
+
+      t.throws(() => {
+        secp256k1.ecdsaRecover(sig, 0, msg32, undefined, null)
+      }, /^Error: Expected output to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaRecover(sig, 0, msg32, true, new Uint8Array(42))
+      }, /^Error: Expected output to be Uint8Array with length 33$/)
+
+      t.throws(() => {
+        secp256k1.ecdsaRecover(sig, 0, msg32, false, new Uint8Array(42))
+      }, /^Error: Expected output to be Uint8Array with length 65$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaRecover with output as function`, (t) => {
+      const sig = Buffer.from(
+        'a0b37f8fba683cc68f6574cd43b39f0343a50008bf6ccea9d13231d9e7e2e1e411edc8d307254296264aebfc3dc76cd8b668373a072fd64665b50000e9fcce52',
+        'hex'
+      )
+      const recid = 1
+      const msg32 = Buffer.from(
+        '0000000000000000000000000000000000000000000000000000000000000000',
+        'hex'
+      )
+
+      t.plan(2)
+
+      secp256k1.ecdsaRecover(sig, recid, msg32, true, (len) => {
+        t.same(len, 33)
+        return new Uint8Array(33)
+      })
+
+      secp256k1.ecdsaRecover(sig, recid, msg32, false, (len) => {
+        t.same(len, 65)
+        return new Uint8Array(65)
+      })
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdsaRecover fixtures`, (t) => {
+      const fixtures = [
+        {
+          sig:
+            'a0b37f8fba683cc68f6574cd43b39f0343a50008bf6ccea9d13231d9e7e2e1e411edc8d307254296264aebfc3dc76cd8b668373a072fd64665b50000e9fcce52',
+          recid: 1,
+          msg32:
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          pubkey33:
+            '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+          pubkey65:
+            '0479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8',
+        },
+      ]
+
+      const { alloc } = Buffer
+      for (let { sig, recid, msg32, pubkey33, pubkey65 } of fixtures) {
+        sig = Buffer.from(sig, 'hex')
+        msg32 = Buffer.from(msg32, 'hex')
+        const r33 = secp256k1.ecdsaRecover(sig, recid, msg32, true, alloc)
+        t.same(r33.toString('hex'), pubkey33)
+        const r65 = secp256k1.ecdsaRecover(sig, recid, msg32, false, alloc)
+        t.same(r65.toString('hex'), pubkey65)
+      }
+
+      t.end()
+    })
+
     // ecdh
+    t.test(`${prefix}.ecdh with invalid public key`, (t) => {
+      t.throws(() => {
+        secp256k1.ecdh(null)
+      }, /^Error: Expected public key to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdh(new Uint8Array(42))
+      }, /^Error: Expected public key to be Uint8Array with length \[33, 65]$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdh with invalid private key`, (t) => {
+      t.throws(() => {
+        secp256k1.ecdh(new Uint8Array(33), null)
+      }, /^Error: Expected private key to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdh(new Uint8Array(33), new Uint8Array(42))
+      }, /^Error: Expected private key to be Uint8Array with length 32$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdh with invalid output`, (t) => {
+      const pubkey = Buffer.from(
+        '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+        'hex'
+      )
+      const seckey = Buffer.from(
+        '0000000000000000000000000000000000000000000000000000000000000001',
+        'hex'
+      )
+
+      t.throws(() => {
+        secp256k1.ecdh(pubkey, seckey, null)
+      }, /^Error: Expected output to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.ecdh(pubkey, seckey, new Uint8Array(42))
+      }, /^Error: Expected output to be Uint8Array with length 32$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdh with output as function`, (t) => {
+      const pubkey = Buffer.from(
+        '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+        'hex'
+      )
+      const seckey = Buffer.from(
+        '0000000000000000000000000000000000000000000000000000000000000001',
+        'hex'
+      )
+
+      t.plan(1)
+
+      secp256k1.ecdh(pubkey, seckey, (len) => {
+        t.same(len, 32)
+        return new Uint8Array(32)
+      })
+
+      t.end()
+    })
+
+    t.test(`${prefix}.ecdh fixtures`, (t) => {
+      const fixtures = [
+        {
+          pubkey:
+            '0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798',
+          seckey:
+            '0000000000000000000000000000000000000000000000000000000000000001',
+          hash:
+            '0f715baf5d4c2ed329785cef29e562f73488c8a2bb9dbc5700b361d54b9b0554',
+        },
+      ]
+
+      for (let { pubkey, seckey, hash } of fixtures) {
+        pubkey = Buffer.from(pubkey, 'hex')
+        seckey = Buffer.from(seckey, 'hex')
+        const result = secp256k1.ecdh(pubkey, seckey, Buffer.alloc)
+        t.same(result.toString('hex'), hash)
+      }
+
+      t.end()
+    })
 
     t.end()
   })

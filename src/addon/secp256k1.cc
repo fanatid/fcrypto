@@ -216,10 +216,21 @@ Napi::Value Secp256k1Addon::ECDSAVerify(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value Secp256k1Addon::ECDSARecover(const Napi::CallbackInfo& info) {
-  RET(0);
+  auto output = info[0].As<Napi::Buffer<unsigned char>>();
+  auto sig = info[1].As<Napi::Buffer<const unsigned char>>().Data();
+  auto recid = info[2].As<Napi::Number>().Int32Value();
+  auto msg32 = info[3].As<Napi::Buffer<const unsigned char>>().Data();
+
+  RET(fcrypto_secp256k1_ecdsa_recover(this->ctx_, output.Data(), sig, recid,
+                                      msg32, output.Length()));
 }
 
 // ECDH
 Napi::Value Secp256k1Addon::ECDH(const Napi::CallbackInfo& info) {
-  RET(0);
+  auto output = info[0].As<Napi::Buffer<unsigned char>>().Data();
+  auto pubkey = info[1].As<Napi::Buffer<const unsigned char>>();
+  auto seckey = info[2].As<Napi::Buffer<const unsigned char>>().Data();
+
+  RET(fcrypto_secp256k1_ecdh(this->ctx_, output, pubkey.Data(), pubkey.Length(),
+                             seckey));
 }
