@@ -99,8 +99,8 @@ int fcrypto_secp256k1_pubkey_combine(const secp256k1_context* ctx,
 /** Tweak a public key by adding tweak times the generator to it.
  *  Returns: 0: on success
  *           1: the public key could not be parsed
- *           2: the tweak was out of range or if the resulting public key would
- * be invalid
+ *           2: the tweak was out of range or if the resulting public key
+ * would be invalid
  */
 int fcrypto_secp256k1_pubkey_tweak_add(const secp256k1_context* ctx,
                                        unsigned char* output,

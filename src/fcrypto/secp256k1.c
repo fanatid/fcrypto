@@ -187,7 +187,7 @@ int fcrypto_secp256k1_pubkey_tweak_mul(const secp256k1_context* ctx,
   return 0;
 }
 
-// // Signature
+// Signature
 int fcrypto_secp256k1_signature_normalize(const secp256k1_context* ctx,
                                           unsigned char* sig) {
   secp256k1_ecdsa_signature sigin, sigout;

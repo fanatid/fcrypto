@@ -540,7 +540,7 @@ function createTests (type) {
       t.end()
     })
 
-    // // publicKeyTweakAdd
+    // publicKeyTweakAdd
     t.test(`${prefix}.publicKeyTweakAdd with invalid public key`, (t) => {
       t.throws(() => {
         secp256k1.publicKeyTweakAdd(null)
@@ -630,7 +630,7 @@ function createTests (type) {
       t.end()
     })
 
-    // // publicKeyTweakMul
+    // publicKeyTweakMul
     t.test(`${prefix}.publicKeyTweakMul with invalid public key`, (t) => {
       t.throws(() => {
         secp256k1.publicKeyTweakMul(null)
@@ -721,8 +721,167 @@ function createTests (type) {
     })
 
     // signatureNormalize
+    t.test(`${prefix}.signatureNormalize with invalid signature`, (t) => {
+      t.throws(() => {
+        secp256k1.signatureNormalize(null)
+      }, /^Error: Expected signature to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.signatureNormalize(new Uint8Array(63))
+      }, /^Error: Expected signature to be Uint8Array with length 64$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.signatureNormalize fixtures`, (t) => {
+      const fixtures = [
+        {
+          sig:
+            'e82a8acee2089e5e5aa61e75b45c45b24a46b270261a2b27e947768a4dc62d687b3e8ff7b41057c728078934aaf433479ec892eae19177e0a8b7c4ff70b95028',
+          normalized:
+            'e82a8acee2089e5e5aa61e75b45c45b24a46b270261a2b27e947768a4dc62d687b3e8ff7b41057c728078934aaf433479ec892eae19177e0a8b7c4ff70b95028',
+        },
+        {
+          sig:
+            '00000000000000000000000000000000000000000000000000000000000000017fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a1',
+          normalized:
+            '00000000000000000000000000000000000000000000000000000000000000017fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a0',
+        },
+      ]
+
+      for (const { sig, normalized } of fixtures) {
+        const result = secp256k1.signatureNormalize(Buffer.from(sig, 'hex'))
+        t.same(result.toString('hex'), normalized)
+      }
+
+      t.end()
+    })
+
     // signatureExport
+    t.test(`${prefix}.signatureExport with invalid signature`, (t) => {
+      t.throws(() => {
+        secp256k1.signatureExport(null)
+      }, /^Error: Expected signature to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.signatureExport(new Uint8Array(63))
+      }, /^Error: Expected signature to be Uint8Array with length 64$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.signatureExport with invalid output`, (t) => {
+      t.throws(() => {
+        secp256k1.signatureExport(new Uint8Array(64), null)
+      }, /^Error: Expected output to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.signatureExport(new Uint8Array(64), new Uint8Array(71))
+      }, /^Error: Expected output to be Uint8Array with length 72$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.signatureExport with output as function`, (t) => {
+      t.plan(1)
+
+      secp256k1.signatureExport(new Uint8Array(64), (len) => {
+        t.same(len, 72)
+        return new Uint8Array(72)
+      })
+
+      t.end()
+    })
+
+    t.test(`${prefix}.signatureExport fixtures`, (t) => {
+      const fixtures = [
+        {
+          sig:
+            '00000000000000000000000000000000000000000000000000000000000000017fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a1',
+          der:
+            '302502010102207fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a1',
+        },
+        {
+          sig:
+            'bbc78e87ec3e9bfd80c28d5ba5517466538052ee20821d9303a4b9fd3689d2a0810006e42abf249ec9b8043a8453ab0b84cc3a274e48bb06b8b1fc9b87f540af',
+          der:
+            '3046022100bbc78e87ec3e9bfd80c28d5ba5517466538052ee20821d9303a4b9fd3689d2a0022100810006e42abf249ec9b8043a8453ab0b84cc3a274e48bb06b8b1fc9b87f540af',
+        },
+      ]
+
+      for (let { sig, der } of fixtures) {
+        sig = Buffer.from(sig, 'hex')
+        const result = secp256k1.signatureExport(sig, Buffer.alloc)
+        t.same(result.toString('hex'), der)
+      }
+
+      t.end()
+    })
+
     // signatureImport
+    t.test(`${prefix}.signatureImport with invalid signature`, (t) => {
+      t.throws(() => {
+        secp256k1.signatureImport(null)
+      }, /^Error: Expected signature to be Uint8Array$/)
+
+      // t.doesNotThrow(() => {
+      //   secp256k1.signatureImport(new Uint8Array(63))
+      // })
+
+      t.end()
+    })
+
+    t.test(`${prefix}.signatureImport with invalid output`, (t) => {
+      const sig = Buffer.from('3006020101020101', 'hex')
+
+      t.throws(() => {
+        secp256k1.signatureImport(sig, null)
+      }, /^Error: Expected output to be Uint8Array$/)
+
+      t.throws(() => {
+        secp256k1.signatureImport(sig, new Uint8Array(63))
+      }, /^Error: Expected output to be Uint8Array with length 64$/)
+
+      t.end()
+    })
+
+    t.test(`${prefix}.signatureImport with output as function`, (t) => {
+      t.plan(1)
+
+      const sig = Buffer.from('3006020101020101', 'hex')
+      secp256k1.signatureImport(sig, (len) => {
+        t.same(len, 64)
+        return new Uint8Array(64)
+      })
+
+      t.end()
+    })
+
+    t.test(`${prefix}.signatureImport fixtures`, (t) => {
+      const fixtures = [
+        {
+          sig:
+            '00000000000000000000000000000000000000000000000000000000000000017fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a1',
+          der:
+            '302502010102207fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a1',
+        },
+        {
+          sig:
+            'bbc78e87ec3e9bfd80c28d5ba5517466538052ee20821d9303a4b9fd3689d2a0810006e42abf249ec9b8043a8453ab0b84cc3a274e48bb06b8b1fc9b87f540af',
+          der:
+            '3046022100bbc78e87ec3e9bfd80c28d5ba5517466538052ee20821d9303a4b9fd3689d2a0022100810006e42abf249ec9b8043a8453ab0b84cc3a274e48bb06b8b1fc9b87f540af',
+        },
+      ]
+
+      for (let { sig, der } of fixtures) {
+        der = Buffer.from(der, 'hex')
+        const result = secp256k1.signatureImport(der, Buffer.alloc)
+        t.same(result.toString('hex'), sig)
+      }
+
+      t.end()
+    })
+
     // ecdsaSign
     // ecdsaVerify
     // ecdsaRecover

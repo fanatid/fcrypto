@@ -161,21 +161,36 @@ Napi::Value Secp256k1Addon::PublicKeyTweakMul(const Napi::CallbackInfo& info) {
 
 // Signature
 Napi::Value Secp256k1Addon::SignatureNormalize(const Napi::CallbackInfo& info) {
-  RET(0);
+  auto sig = info[0].As<Napi::Buffer<unsigned char>>().Data();
+
+  RET(fcrypto_secp256k1_signature_normalize(this->ctx_, sig));
 }
 
 Napi::Value Secp256k1Addon::SignatureExport(const Napi::CallbackInfo& info) {
-  RET(0);
+  auto obj = info[0].As<Napi::Object>();
+  auto output = obj.Get("output").As<Napi::Buffer<unsigned char>>().Data();
+  size_t outputlen = 72;
+  auto sig = info[1].As<Napi::Buffer<const unsigned char>>().Data();
+
+  int ret =
+      fcrypto_secp256k1_signature_export(this->ctx_, output, &outputlen, sig);
+  if (ret == 0) {
+    obj.Set("outputlen", outputlen);
+  }
+
+  RET(ret);
 }
 
 Napi::Value Secp256k1Addon::SignatureImport(const Napi::CallbackInfo& info) {
-  RET(0);
+  auto output = info[0].As<Napi::Buffer<unsigned char>>().Data();
+  auto sig = info[1].As<Napi::Buffer<const unsigned char>>();
+
+  RET(fcrypto_secp256k1_signature_import(this->ctx_, output, sig.Data(),
+                                         sig.Length()));
 }
 
 // ECDSA
 Napi::Value Secp256k1Addon::ECDSASign(const Napi::CallbackInfo& info) {
-  auto env = info.Env();
-
   auto obj = info[0].As<Napi::Object>();
   auto output = obj.Get("signature").As<Napi::Buffer<unsigned char>>().Data();
   int recid;
@@ -188,7 +203,7 @@ Napi::Value Secp256k1Addon::ECDSASign(const Napi::CallbackInfo& info) {
     obj.Set("recid", recid);
   }
 
-  return Napi::Number::New(env, ret);
+  RET(ret);
 }
 
 Napi::Value Secp256k1Addon::ECDSAVerify(const Napi::CallbackInfo& info) {
