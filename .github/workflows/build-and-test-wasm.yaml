@@ -1,6 +1,8 @@
 name: Build WebAssembly and run tests
 
-on: push
+on:
+  push:
+  pull_request:
 
 # This is shitty that we can not share steps for both jobs =\
 jobs:

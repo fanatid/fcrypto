@@ -1,6 +1,8 @@
 name: Build addon and run tests
 
-on: push
+on:
+  push:
+  pull_request:
 
 jobs:
   build:
@@ -22,7 +24,10 @@ jobs:
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
+      # Skip MacOS, because:
+      # [warning]Cache size of ~1247 MB (1307993580 B) is over the 400MB limit, not saving cache.
       - uses: actions/cache@v1
+        if: runner.os != 'macOS'
         with:
           path: ${{ steps.yarn-cache.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -69,6 +74,7 @@ jobs:
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
       - uses: actions/cache@v1
+        if: runner.os != 'macOS'
         with:
           path: ${{ steps.yarn-cache.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
