@@ -6,7 +6,8 @@ Napi::FunctionReference Secp256k1Addon::constructor;
 
 Napi::Value Secp256k1Addon::Init(Napi::Env env) {
   Napi::Function func = DefineClass(
-      env, "Secp256k1Addon",
+      env,
+      "Secp256k1Addon",
       {
           InstanceMethod("contextRandomize", &Secp256k1Addon::ContextRandomize),
 
@@ -101,24 +102,30 @@ Napi::Value Secp256k1Addon::PublicKeyCreate(const Napi::CallbackInfo& info) {
   auto output = info[0].As<Napi::Buffer<unsigned char>>();
   auto seckey = info[1].As<Napi::Buffer<const unsigned char>>().Data();
 
-  RET(fcrypto_secp256k1_pubkey_create(this->ctx_, output.Data(), seckey,
-                                      output.Length()));
+  RET(fcrypto_secp256k1_pubkey_create(
+      this->ctx_, output.Data(), seckey, output.Length()));
 }
 
 Napi::Value Secp256k1Addon::PublicKeyConvert(const Napi::CallbackInfo& info) {
   auto output = info[0].As<Napi::Buffer<unsigned char>>();
   auto pubkey = info[1].As<Napi::Buffer<const unsigned char>>();
 
-  RET(fcrypto_secp256k1_pubkey_convert(this->ctx_, output.Data(), pubkey.Data(),
-                                       pubkey.Length(), output.Length()));
+  RET(fcrypto_secp256k1_pubkey_convert(this->ctx_,
+                                       output.Data(),
+                                       pubkey.Data(),
+                                       pubkey.Length(),
+                                       output.Length()));
 }
 
 Napi::Value Secp256k1Addon::PublicKeyNegate(const Napi::CallbackInfo& info) {
   auto output = info[0].As<Napi::Buffer<unsigned char>>();
   auto pubkey = info[1].As<Napi::Buffer<const unsigned char>>();
 
-  RET(fcrypto_secp256k1_pubkey_negate(this->ctx_, output.Data(), pubkey.Data(),
-                                      pubkey.Length(), output.Length()));
+  RET(fcrypto_secp256k1_pubkey_negate(this->ctx_,
+                                      output.Data(),
+                                      pubkey.Data(),
+                                      pubkey.Length(),
+                                      output.Length()));
 }
 
 Napi::Value Secp256k1Addon::PublicKeyCombine(const Napi::CallbackInfo& info) {
@@ -134,8 +141,11 @@ Napi::Value Secp256k1Addon::PublicKeyCombine(const Napi::CallbackInfo& info) {
     inputslen[i] = pubkey.Length();
   }
 
-  RET(fcrypto_secp256k1_pubkey_combine(this->ctx_, output.Data(), inputs.get(),
-                                       inputslen.get(), pubkeys.Length(),
+  RET(fcrypto_secp256k1_pubkey_combine(this->ctx_,
+                                       output.Data(),
+                                       inputs.get(),
+                                       inputslen.get(),
+                                       pubkeys.Length(),
                                        output.Length()));
 }
 
@@ -144,8 +154,11 @@ Napi::Value Secp256k1Addon::PublicKeyTweakAdd(const Napi::CallbackInfo& info) {
   auto pubkey = info[1].As<Napi::Buffer<const unsigned char>>();
   auto tweak = info[2].As<Napi::Buffer<const unsigned char>>().Data();
 
-  RET(fcrypto_secp256k1_pubkey_tweak_add(this->ctx_, output.Data(),
-                                         pubkey.Data(), pubkey.Length(), tweak,
+  RET(fcrypto_secp256k1_pubkey_tweak_add(this->ctx_,
+                                         output.Data(),
+                                         pubkey.Data(),
+                                         pubkey.Length(),
+                                         tweak,
                                          output.Length()));
 }
 
@@ -154,8 +167,11 @@ Napi::Value Secp256k1Addon::PublicKeyTweakMul(const Napi::CallbackInfo& info) {
   auto pubkey = info[1].As<Napi::Buffer<const unsigned char>>();
   auto tweak = info[2].As<Napi::Buffer<const unsigned char>>().Data();
 
-  RET(fcrypto_secp256k1_pubkey_tweak_mul(this->ctx_, output.Data(),
-                                         pubkey.Data(), pubkey.Length(), tweak,
+  RET(fcrypto_secp256k1_pubkey_tweak_mul(this->ctx_,
+                                         output.Data(),
+                                         pubkey.Data(),
+                                         pubkey.Length(),
+                                         tweak,
                                          output.Length()));
 }
 
@@ -185,8 +201,8 @@ Napi::Value Secp256k1Addon::SignatureImport(const Napi::CallbackInfo& info) {
   auto output = info[0].As<Napi::Buffer<unsigned char>>().Data();
   auto sig = info[1].As<Napi::Buffer<const unsigned char>>();
 
-  RET(fcrypto_secp256k1_signature_import(this->ctx_, output, sig.Data(),
-                                         sig.Length()));
+  RET(fcrypto_secp256k1_signature_import(
+      this->ctx_, output, sig.Data(), sig.Length()));
 }
 
 // ECDSA
@@ -211,8 +227,8 @@ Napi::Value Secp256k1Addon::ECDSAVerify(const Napi::CallbackInfo& info) {
   auto msg32 = info[1].As<Napi::Buffer<const unsigned char>>().Data();
   auto pubkey = info[2].As<Napi::Buffer<const unsigned char>>();
 
-  RET(fcrypto_secp256k1_ecdsa_verify(this->ctx_, sigraw, msg32, pubkey.Data(),
-                                     pubkey.Length()));
+  RET(fcrypto_secp256k1_ecdsa_verify(
+      this->ctx_, sigraw, msg32, pubkey.Data(), pubkey.Length()));
 }
 
 Napi::Value Secp256k1Addon::ECDSARecover(const Napi::CallbackInfo& info) {
@@ -221,8 +237,8 @@ Napi::Value Secp256k1Addon::ECDSARecover(const Napi::CallbackInfo& info) {
   auto recid = info[2].As<Napi::Number>().Int32Value();
   auto msg32 = info[3].As<Napi::Buffer<const unsigned char>>().Data();
 
-  RET(fcrypto_secp256k1_ecdsa_recover(this->ctx_, output.Data(), sig, recid,
-                                      msg32, output.Length()));
+  RET(fcrypto_secp256k1_ecdsa_recover(
+      this->ctx_, output.Data(), sig, recid, msg32, output.Length()));
 }
 
 // ECDH
@@ -231,6 +247,6 @@ Napi::Value Secp256k1Addon::ECDH(const Napi::CallbackInfo& info) {
   auto pubkey = info[1].As<Napi::Buffer<const unsigned char>>();
   auto seckey = info[2].As<Napi::Buffer<const unsigned char>>().Data();
 
-  RET(fcrypto_secp256k1_ecdh(this->ctx_, output, pubkey.Data(), pubkey.Length(),
-                             seckey));
+  RET(fcrypto_secp256k1_ecdh(
+      this->ctx_, output, pubkey.Data(), pubkey.Length(), seckey));
 }

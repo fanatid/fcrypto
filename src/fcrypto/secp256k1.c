@@ -23,11 +23,11 @@ void secp256k1_default_error_callback_fn(const char* str, void* data) {
 // Local helpers
 #define RETURN_INVERTED(result) return result == 1 ? 0 : 1
 
-#define RETURN_IF_ZERO(result, retcode) \
-  do {                                  \
-    if (result == 0) {                  \
-      return retcode;                   \
-    }                                   \
+#define RETURN_IF_ZERO(result, retcode)                                        \
+  do {                                                                         \
+    if (result == 0) {                                                         \
+      return retcode;                                                          \
+    }                                                                          \
   } while (0)
 
 // TODO: remove everything except retcode?
@@ -35,8 +35,8 @@ void secp256k1_default_error_callback_fn(const char* str, void* data) {
   do {                                                                         \
     int flags =                                                                \
         outputlen == 33 ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED; \
-    RETURN_IF_ZERO(secp256k1_ec_pubkey_serialize(ctx, output, &outputlen,      \
-                                                 &pubkey, flags),              \
+    RETURN_IF_ZERO(secp256k1_ec_pubkey_serialize(                              \
+                       ctx, output, &outputlen, &pubkey, flags),               \
                    retcode);                                                   \
   } while (0)
 
@@ -231,8 +231,8 @@ int fcrypto_secp256k1_ecdsa_sign(const secp256k1_context* ctx,
                                  const unsigned char* seckey) {
   secp256k1_ecdsa_recoverable_signature sig;
   RETURN_IF_ZERO(
-      secp256k1_ecdsa_sign_recoverable(ctx, &sig, msg32, seckey,
-                                       secp256k1_nonce_function_rfc6979, NULL),
+      secp256k1_ecdsa_sign_recoverable(
+          ctx, &sig, msg32, seckey, secp256k1_nonce_function_rfc6979, NULL),
       1);
 
   RETURN_IF_ZERO(secp256k1_ecdsa_recoverable_signature_serialize_compact(
@@ -283,8 +283,12 @@ int fcrypto_secp256k1_ecdh(const secp256k1_context* ctx,
                            const unsigned char* seckey) {
   secp256k1_pubkey pubkey;
   RETURN_IF_ZERO(secp256k1_ec_pubkey_parse(ctx, &pubkey, input, inputlen), 1);
-  RETURN_IF_ZERO(secp256k1_ecdh(ctx, output, &pubkey, seckey,
-                                secp256k1_ecdh_hash_function_sha256, NULL),
+  RETURN_IF_ZERO(secp256k1_ecdh(ctx,
+                                output,
+                                &pubkey,
+                                seckey,
+                                secp256k1_ecdh_hash_function_sha256,
+                                NULL),
                  2);
   return 0;
 }
