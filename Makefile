@@ -146,6 +146,7 @@ prettier = ./node_modules/.bin/prettier-standard
 
 format_cpp_files = src/addon/* src/fcrypto/*
 format_js_files = benchmarks/*.js lib/*.js lib/**/*.js test/*.js util/*.js
+format_json_files = benchmarks/package.json package.json
 lint_dir = build/lint
 
 format: format-cpp format-js
@@ -155,7 +156,7 @@ format-cpp:
 
 format-js:
 	$(eslint) --fix $(format_js_files)
-	$(prettier) --lint $(format_js_files) package.json
+	$(prettier) --lint $(format_js_files) $(format_json_files)
 
 
 lint: lint-cpp lint-js
@@ -178,13 +179,13 @@ lint-js:
 	mkdir -p $(lint_dir)/js/src $(lint_dir)/js/dst
 	rsync -a --delete --exclude=build --exclude=node_modules . $(lint_dir)/js/src
 	rsync -a --delete --exclude=build --exclude=node_modules . $(lint_dir)/js/dst
-	cd $(lint_dir)/js/dst && ../../../../$(prettier) $(format_js_files) package.json
+	cd $(lint_dir)/js/dst && ../../../../$(prettier) $(format_js_files) $(format_json_files)
 	git diff --no-index --exit-code $(lint_dir)/js/src $(lint_dir)/js/dst
 
 # No extra steps for `rsync`
 lint-js-ci:
 	$(eslint) --fix $(format_js_files)
-	$(prettier) $(format_js_files) package.json
+	$(prettier) $(format_js_files) $(format_json_files)
 	git diff --exit-code --color=always
 
 tape = ./node_modules/.bin/tape
