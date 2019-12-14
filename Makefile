@@ -1,7 +1,8 @@
 .PHONY: all build build-addon build-addon-fcrypto build-addon-copy build-wasm \
-	build-wasm-docker-image build-wasm-libs build-wasm-secp256k1 \
-	build-wasm-fcrypto build-wasm-copy build-wasm-jsglue build-wasm-wat clean \
-	format format-cpp format-js lint lint-cpp lint-js test
+	build-wasm-ci build-wasm-docker-image build-wasm-docker-image-ci \
+	build-wasm-libs build-wasm-secp256k1 build-wasm-fcrypto build-wasm-copy \
+	build-wasm-jsglue build-wasm-wat clean format format-cpp format-js lint \
+	lint-cpp lint-cpp-ci lint-js lint-js-ci test
 
 all: build-wasm
 

@@ -5,18 +5,27 @@ on: push
 jobs:
   cpp:
     name: Lint C/C++ code
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
       - name: Fetch code
         uses: actions/checkout@v1
         with:
           fetch-depth: 1
 
-      - name: Install clang-format
-        run: sudo apt-get install clang-format --no-install-recommends
+      - uses: actions/cache@v1
+        id: cache
+        with:
+          path: clang
+          key: clang-llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04
+
+      - name: Download clang-format
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: wget -O- -q http://releases.llvm.org/9.0.0/$VER.tar.xz | tar xfJ - $VER/bin/clang-format && mv $VER clang
+        env:
+          VER: clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-18.04
 
       - name: Run lint command
-        run: make lint-cpp-ci
+        run: PATH=$PATH:./clang/bin/ make lint-cpp-ci
 
   js:
     name: Lint JS code
