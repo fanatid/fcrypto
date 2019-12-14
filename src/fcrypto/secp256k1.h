@@ -138,8 +138,7 @@ int fcrypto_secp256k1_signature_export(const secp256k1_context* ctx,
                                        size_t* outputlen,
                                        const unsigned char* input64);
 
-/**
- * Parse a DER ECDSA signature.
+/** Parse a DER ECDSA signature.
  *  Returns: 0: on success
  *           1: signature could not be parsed
  *           2: never should be returned
