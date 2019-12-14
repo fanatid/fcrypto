@@ -21,8 +21,7 @@ function createFixtures (secp256k1) {
 }
 
 async function importFcrypto (name) {
-  const { secp256k1 } = await fcrypto.load(name)
-  secp256k1.init()
+  const { secp256k1 } = await fcrypto.load(name, { secp256k1: true })
   return secp256k1
 }
 
