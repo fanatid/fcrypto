@@ -30,6 +30,7 @@
     "prettier": "^1.19.1",
     "prettier-plugin-packagejson": "^2.0.5",
     "prettier-standard": "^16.1.0",
+    "ssri": "^7.1.0",
     "tap-dot": "^2.0.0",
     "tape": "^4.11.0",
     "yargs": "^15.0.2"

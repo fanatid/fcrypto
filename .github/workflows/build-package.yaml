@@ -1,18 +1,19 @@
-name: Build addon and run tests
+name: Build package
 
 on:
   push:
-  pull_request:
+    tags:
+      - '*'
+  release:
 
 jobs:
-  build:
+  addon:
     name: Build addon
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os:
           - macos-latest
-          - ubuntu-latest
           - windows-latest
     steps:
       - name: Fetch code
@@ -50,31 +51,24 @@ jobs:
       - name: Upload addon
         uses: actions/upload-artifact@v1
         with:
-          name: addon-${{ matrix.os }}
+          name: addon-${{ runner.os }}
           path: addon
 
-  test:
-    name: Test addon
-    needs: build
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
-          - windows-latest
+  package:
+    name: Build package
+    needs: addon
+    runs-on: ubuntu-latest
     steps:
       - name: Fetch code
         uses: actions/checkout@v1
         with:
-          fetch-depth: 1
+          submodules: true
 
       - name: Get yarn cache directory
         id: yarn-cache
         run: echo "::set-output name=dir::$(yarn cache dir)"
 
       - uses: actions/cache@v1
-        if: runner.os != 'macOS'
         with:
           path: ${{ steps.yarn-cache.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -85,37 +79,38 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --ignore-scripts
 
-      - name: Get minimal Node.js version from package.json (Linux & macOS)
-        id: node-version-nix
-        if: runner.os != 'Windows'
-        run: echo "::set-output name=version::$(node -p 'require("./package.json").engines.node.match(/(\d.*)$/)[0]')"
-
-      - name: Use Node.js ${{ steps.node-version-nix.outputs.version }} (Linux & macOS)
-        if: runner.os != 'Windows'
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ steps.node-version-nix.outputs.version }}
-
-      - name: Get minimal Node.js version from package.json (Windows)
-        id: node-version-win
-        if: runner.os == 'Windows'
-        run: echo "::set-output name=version::$(node -p 'require(\"./package.json\").engines.node.match(/(\d.*)$/)[0]')"
-
-      - name: Use Node.js ${{ steps.node-version-win.outputs.version }} (Windows)
-        if: runner.os == 'Windows'
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ steps.node-version-win.outputs.version }}
-
-      - name: Download addon
+      - name: Download macOS addon
         uses: actions/download-artifact@v1
         with:
-          name: addon-${{ matrix.os }}
+          name: addon-macOS
 
-      - name: Copy addon
-        run: cp addon-${{ matrix.os }}/* .
+      - name: Download Windows addon
+        uses: actions/download-artifact@v1
+        with:
+          name: addon-Windows
 
-      - name: Run tests for addon
-        env:
-          FCRYPTO_TEST_ONLY: addon
-        run: make test-tap
+      - name: Copy addons
+        run: cp addon-macOS/* . && cp addon-Windows/* .
+
+      - name: Build Linux addon
+        run: make build-addon
+
+      - name: Build WebAssembly files
+        run: make build-wasm-ci
+
+      - name: Build package
+        run: make package
+
+      - name: Get package version from package.json
+        id: pkg-version
+        run: echo "::set-output name=version::$(node -p 'require("./package.json").version')"
+
+      - name: Upload package
+        uses: actions/upload-artifact@v1
+        with:
+          name: package
+          path: fcrypto-${{ steps.pkg-version.outputs.version }}.tgz
+
+      - name: Verify from NPM
+        if: github.event_name == 'release'
+        run: node util/package-verify.js -f fcrypto-${{ steps.pkg-version.outputs.version }}.tgz
