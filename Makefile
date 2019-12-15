@@ -2,7 +2,8 @@
 	build-wasm-ci build-wasm-docker-image build-wasm-docker-image-ci \
 	build-wasm-libs build-wasm-secp256k1 build-wasm-fcrypto build-wasm-copy \
 	build-wasm-jsglue build-wasm-wat clean format format-cpp format-js lint \
-	lint-cpp lint-cpp-ci lint-js lint-js-ci test
+	lint-cpp lint-cpp-ci lint-js lint-js-ci test test-tap package-copy-files \
+	package-fix-packagejson package-pack package-copy
 
 all: build-wasm
 
@@ -198,3 +199,38 @@ test:
 
 test-tap:
 	$(tape) $(test_files)
+
+
+package_dir = build/package
+package_include_dirs = \
+	docs \
+	lib \
+	src
+package_include_files = \
+	binding.gyp \
+	CHANGELOG.md \
+	fcrypto.wasm \
+	fcrypto-darwin-x64.node \
+	fcrypto-linux-x64.node \
+	fcrypto-win32-x64.node \
+	LICENSE \
+	package.json \
+	README.md
+
+package: package-copy-files package-fix-packagejson package-pack package-copy
+
+package-copy-files:
+	mkdir -p $(package_dir)
+	for loc in $(package_include_dirs); do \
+		rsync -a --delete $$loc $(package_dir); \
+	done
+	cp $(package_include_files) $(package_dir)
+
+package-fix-packagejson:
+	util/package-fix-packagejson.js -f $(package_dir)/package.json
+
+package-pack:
+	cd $(package_dir) && npm pack
+
+package-copy:
+	cp $(package_dir)/fcrypto-`node -p "require('./package.json').version"`.tgz .
