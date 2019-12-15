@@ -1,6 +1,6 @@
 {
   "name": "fcrypto",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Another attempt implement fast cryptography for JavaScript",
   "keywords": [
     "secp256k1"
